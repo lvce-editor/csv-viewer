@@ -1,6 +1,8 @@
-import * as GetOrCreateWorker from '../GetOrCreateWorker/GetOrCreateWorker.ts'
-import * as LaunchCsvWorker from '../LaunchCsvWorker/LaunchCsvWorker.ts'
+// @ts-ignore
+const rpc = vscode.createRpc({
+  id: 'builtin.csv-viewer.csv-worker',
+})
 
-const { invoke } = GetOrCreateWorker.getOrCreateWorker(LaunchCsvWorker.launchCsvWorker)
-
-export { invoke }
+export const invoke = (method, ...params) => {
+  return rpc.invoke(method, ...params)
+}

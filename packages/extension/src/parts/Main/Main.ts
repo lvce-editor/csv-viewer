@@ -7,6 +7,7 @@ const webViewProvider = {
     const content = await vscode.readFile(uri)
 
     const parsed = await CsvWorker.invoke('Csv.parse', content)
+    console.log({ parsed })
     await webView.invoke('initialize', parsed)
 
     // TODO ask csv worker to create virtual dom
