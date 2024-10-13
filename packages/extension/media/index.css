@@ -36,12 +36,18 @@ body {
   border-collapse: collapse;
 }
 
+.TableHeading {
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .TableCell {
   border: 1px solid var(--TableBorderColor);
   contain: strict;
   width: var(--TableCellWidth);
   height: var(--TableCellHeight);
   padding-left: 10px;
+  font-size: 13px;
 }
 
 .TableCellInfo {
