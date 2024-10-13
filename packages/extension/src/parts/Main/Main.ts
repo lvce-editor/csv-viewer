@@ -1,11 +1,13 @@
-import * as FilterAggregates from '../FilterAggregates/FilterAggregates.ts'
+import * as CsvWorker from '../CsvWorker/CsvWorker.ts'
 
 const webViewProvider = {
   id: 'builtin.csv-viewer',
   async create(webView, uri) {
     // @ts-ignore
     const content = await vscode.readFile(uri)
-    await webView.invoke('initialize', content)
+
+    const parsed = await CsvWorker.invoke('Csv.parse', content)
+    await webView.invoke('initialize', parsed)
 
     // TODO ask csv worker to create virtual dom
     // TODO support connecting state to webview
@@ -21,14 +23,7 @@ const webViewProvider = {
     // })
   },
   commands: {
-    async handleInput(text) {
-      // @ts-ignore
-      const aggregates = webViewProvider.aggregates
-      // @ts-ignore
-      const webView = webViewProvider.webView
-      const filtered = FilterAggregates.filterAggregates(aggregates, text)
-      await webView.invoke('setContent', filtered)
-    },
+    async handleInput(text) {},
   },
 }
 
