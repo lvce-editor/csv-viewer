@@ -62,11 +62,15 @@ const replace = ($Parent, $Old, $New) => {
   }
   const oldChildLength = $Old.children.length
   const newChildLength = $New.children.length
-  for (let i = 0; i < oldChildLength; i++) {
+  const minLength = Math.min(oldChildLength, newChildLength)
+  for (let i = 0; i < minLength; i++) {
     replace($Old, $Old.children[i], $New.children[i])
   }
-  for (let i = oldChildLength; i < newChildLength; i++) {
+  for (let i = minLength; i < newChildLength; i++) {
     $Old.append($New.children[i])
+  }
+  for (let i = minLength; i < oldChildLength; i++) {
+    $Old.lastChild.remove()
   }
 }
 
