@@ -3,10 +3,12 @@ import * as FilterAggregates from '../FilterAggregates/FilterAggregates.ts'
 const webViewProvider = {
   id: 'builtin.csv-viewer',
   async create(webView, uri) {
+    // @ts-ignore
+    const content = await vscode.readFile(uri)
+    await webView.invoke('initialize', content)
+
     // TODO ask csv worker to create virtual dom
     // TODO support connecting state to webview
-    // @ts-ignore
-    this.aggregates = aggregrates
     // @ts-ignore
     this.webView = webView
   },
