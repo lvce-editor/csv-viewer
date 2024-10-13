@@ -42,7 +42,6 @@ const webViewProvider = {
       }
       await CsvWorker.invoke('WebView.setCursor', id, parsedRow, parsedColumn)
       await CsvWorker.invoke('WebView.setTextarea', id, cursor.textArea)
-      console.log('this')
       const newDom = await CsvWorker.invoke('Csv.getVirtualDom', parsed, cursor)
       // @ts-ignore
       await webViewProvider.webView.invoke('setDom', newDom)

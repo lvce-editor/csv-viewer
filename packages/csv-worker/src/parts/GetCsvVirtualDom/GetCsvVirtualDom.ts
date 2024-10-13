@@ -99,7 +99,6 @@ export const getCsvVirtualDom = (parsed: ParsedCsv, cursor: any): any => {
       children: [getCsvTableHeadDom(parsed.header, cursor), getCsvTableBodyDom(parsed.content, cursor)],
     },
   ]
-  console.log({ cursor })
   if (cursor && cursor.textArea) {
     children.push({
       type: 'textarea',
@@ -110,7 +109,6 @@ export const getCsvVirtualDom = (parsed: ParsedCsv, cursor: any): any => {
       },
       children: [],
     })
-    console.log('render textarea')
   }
   const dom: any = {
     type: 'div',
