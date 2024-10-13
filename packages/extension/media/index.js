@@ -6,7 +6,6 @@ const handleDoubleClick = async (event) => {
 }
 
 const handleClick = async (event) => {
-  event.preventDefault()
   const { target } = event
   const { dataset } = target
   await rpc.invoke('handleClick', dataset.row, dataset.column)
