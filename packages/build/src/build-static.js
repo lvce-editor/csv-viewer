@@ -13,6 +13,7 @@ await cp(path.join(root, 'dist'), path.join(root, 'dist2'), {
 
 const { commitHash } = await exportStatic({
   extensionPath: 'packages/extension',
+  testPath: 'packages/e2e',
   root,
 })
 
