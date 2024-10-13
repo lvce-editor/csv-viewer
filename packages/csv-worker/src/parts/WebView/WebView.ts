@@ -34,6 +34,12 @@ const getNewWebView = (webView: any, key: string): any => {
   } else if (key === 'ArrowUp') {
     rowIndex--
   }
+  if (rowIndex <= 0) {
+    rowIndex = 0
+  }
+  if (columnIndex <= 0) {
+    columnIndex = 0
+  }
   return {
     ...webView,
     rowIndex,
