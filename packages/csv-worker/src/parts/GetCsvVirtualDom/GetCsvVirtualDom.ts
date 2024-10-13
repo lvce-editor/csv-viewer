@@ -99,6 +99,12 @@ export const getCsvVirtualDom = (parsed: ParsedCsv, cursor: any): any => {
       children: [getCsvTableHeadDom(parsed.header, cursor), getCsvTableBodyDom(parsed.content, cursor)],
     },
   ]
+
+  const dom: any = {
+    type: 'div',
+    className: 'Content',
+    children,
+  }
   if (cursor && cursor.textArea) {
     children.push({
       type: 'textarea',
@@ -107,13 +113,9 @@ export const getCsvVirtualDom = (parsed: ParsedCsv, cursor: any): any => {
         left: '100px',
         top: '100px',
       },
+      name: 'TextArea',
       children: [],
     })
-  }
-  const dom: any = {
-    type: 'div',
-    className: 'Content',
-    children,
   }
   return dom
 }

@@ -33,6 +33,14 @@ const render = (vdom) => {
   if (vdom['data-column'] !== undefined) {
     $Element.dataset.column = vdom['data-column']
   }
+  if (vdom.style) {
+    for (const [key, value] of Object.entries(vdom.style)) {
+      $Element.style[key] = value
+    }
+  }
+  if (vdom.name) {
+    $Element.name = vdom.name
+  }
   $Element.append(...$$children)
   return $Element
 }
