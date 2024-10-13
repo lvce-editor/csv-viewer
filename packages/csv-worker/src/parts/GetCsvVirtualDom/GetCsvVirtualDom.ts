@@ -1,7 +1,14 @@
 import type { CsvRow } from '../CsvRow/CsvRow.ts'
 import type { ParsedCsv } from '../ParsedCsv/ParsedCsv.ts'
 
-const getCsvTableHeadDom = (rows: readonly string[]) => {
+const getFocused = (cursor: any, rowIndex: number, columnIndex: number) => {
+  if (!cursor) {
+    return false
+  }
+  return cursor.rowIndex === rowIndex && cursor.columnIndex === columnIndex
+}
+
+const getCsvTableHeadDom = (rows: readonly string[], cursor: any) => {
   const children: any[] = []
   children.push({
     type: 'th',
@@ -34,14 +41,16 @@ const getCsvTableHeadDom = (rows: readonly string[]) => {
   }
 }
 
-const getCsvTableBodyDom = (rows: readonly CsvRow[]) => {
+const getCsvTableBodyDom = (rows: readonly CsvRow[], cursor: any) => {
   const dom: any[] = []
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i]
     const children: any[] = []
+    const isFocused = getFocused(cursor, i, 0)
+    const extraClass = isFocused ? 'TableCellFocused' : ''
     children.push({
       type: 'td',
-      className: 'TableCell TableCellInfo',
+      className: `TableCell TableCellInfo ${extraClass}`,
       'data-row': i,
       'data-column': 0,
       children: [
@@ -53,9 +62,11 @@ const getCsvTableBodyDom = (rows: readonly CsvRow[]) => {
     })
     for (let j = 0; j < row.length; j++) {
       const cell = row[j]
+      const focused = getFocused(cursor, i, j)
+      const extraClass = focused ? 'TableCellFocused' : ''
       children.push({
         type: 'td',
-        className: 'TableCell',
+        className: `TableCell ${extraClass}`,
         'data-row': i,
         'data-column': j,
         children: [
@@ -80,7 +91,7 @@ const getCsvTableBodyDom = (rows: readonly CsvRow[]) => {
   return tableBody
 }
 
-export const getCsvVirtualDom = (parsed: ParsedCsv): any => {
+export const getCsvVirtualDom = (parsed: ParsedCsv, cursor: any): any => {
   const dom: any = {
     type: 'div',
     className: 'Content',
@@ -88,7 +99,7 @@ export const getCsvVirtualDom = (parsed: ParsedCsv): any => {
       {
         type: 'table',
         className: 'Table',
-        children: [getCsvTableHeadDom(parsed.header), getCsvTableBodyDom(parsed.content)],
+        children: [getCsvTableHeadDom(parsed.header, cursor), getCsvTableBodyDom(parsed.content, cursor)],
       },
     ],
   }

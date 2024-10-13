@@ -16,5 +16,4 @@ export const setCursor = (id: number, rowIndex: number, columnIndex: number) => 
     columnIndex,
   }
   WebViewStates.set(id, newWebView)
-  console.log({ newWebView })
 }

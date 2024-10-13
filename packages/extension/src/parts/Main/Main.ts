@@ -17,6 +17,8 @@ const webViewProvider = {
     // TODO support connecting state to webview
     // @ts-ignore
     this.webView = webView
+    // @ts-ignore
+    webViewProvider.parsed = parsed
   },
   async open(uri, webView) {
     // const content = await vscode.readFile(uri)
@@ -34,7 +36,16 @@ const webViewProvider = {
     async handleClick(row, column) {
       const parsedRow = parseInt(row)
       const parsedColumn = parseInt(column)
+      // @ts-ignore
+      const parsed = webViewProvider.parsed
+      const cursor = {
+        rowIndex: parsedRow,
+        columnIndex: parsedColumn,
+      }
       await CsvWorker.invoke('WebView.setCursor', id, parsedRow, parsedColumn)
+      const newDom = await CsvWorker.invoke('Csv.getVirtualDom', parsed, cursor)
+      // @ts-ignore
+      await webViewProvider.webView.invoke('setDom', newDom)
     },
   },
 }

@@ -31,16 +31,23 @@ const render = (vdom) => {
   return $Element
 }
 
+const setDom = (vdom) => {
+  const $Rendered = render(vdom)
+  const $App = document.querySelector('.App')
+  $App?.replaceChildren()
+  $App?.append($Rendered)
+}
+
 const initialize = (vdom) => {
   const $App = document.createElement('div')
   $App.addEventListener('dblclick', handleDoubleClick)
   $App.addEventListener('click', handleClick)
   $App.className = 'App'
-  const $Rendered = render(vdom)
-  $App.append($Rendered)
   document.body.append($App)
+  setDom(vdom)
 }
 
 const rpc = globalThis.lvceRpc({
   initialize,
+  setDom,
 })
