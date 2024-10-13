@@ -1,7 +1,15 @@
 export const name = 'csv-viewer'
 
-export const skip = true
-
 export const test = async ({ FileSystem, Main, Editor, Locator, expect }) => {
-  // TODO verify csv can be opened
+  // arrange
+  const tmpDir = await FileSystem.getTmpDir()
+  await FileSystem.writeFile(
+    `${tmpDir}/test.csv`,
+    `key, value
+a,1
+b,2
+`,
+  )
+
+  await Main.openUri(`${tmpDir}/test.csv`)
 }
