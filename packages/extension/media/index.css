@@ -8,6 +8,7 @@
   --Foreground: rgb(156, 162, 160);
   --TableBorderColor: rgba(204, 204, 204, 0.13);
   --ActiveSelectionBackground: #515f59;
+  --ActiveSelectionForeground: white;
 }
 
 html,
@@ -36,12 +37,18 @@ body {
   border-collapse: collapse;
 }
 
+.TableHeading {
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .TableCell {
   border: 1px solid var(--TableBorderColor);
   contain: strict;
   width: var(--TableCellWidth);
   height: var(--TableCellHeight);
   padding-left: 10px;
+  font-size: 13px;
 }
 
 .TableCellInfo {
@@ -53,6 +60,7 @@ body {
 
 .TableCellFocused {
   background: var(--ActiveSelectionBackground);
+  color: var(--ActiveSelectionForeground);
 }
 
 .Content {
