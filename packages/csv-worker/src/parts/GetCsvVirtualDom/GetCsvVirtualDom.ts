@@ -1,5 +1,6 @@
 import type { CsvRow } from '../CsvRow/CsvRow.ts'
 import type { ParsedCsv } from '../ParsedCsv/ParsedCsv.ts'
+import * as GetTextAreaPosition from '../GetTextAreaPosition/GetTextAreaPosition.ts'
 
 const getFocused = (cursor: any, rowIndex: number, columnIndex: number) => {
   if (!cursor) {
@@ -106,12 +107,13 @@ export const getCsvVirtualDom = (parsed: ParsedCsv, cursor: any): any => {
     children,
   }
   if (cursor && cursor.textArea) {
+    const { x, y } = GetTextAreaPosition.getTextAreaPosition(cursor)
     children.push({
       type: 'textarea',
       className: 'TextArea',
       style: {
-        left: '100px',
-        top: '100px',
+        left: `${x}px`,
+        top: `${y}px`,
       },
       name: 'TextArea',
       children: [],
