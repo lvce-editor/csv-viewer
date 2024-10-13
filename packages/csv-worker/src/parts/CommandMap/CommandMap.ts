@@ -9,4 +9,5 @@ export const commandMap = {
   'WebView.setCursor': WebView.setCursor,
   'WebView.getCursor': WebView.getCursor,
   'WebView.handleKeyDown': WebView.handleKeyDown,
+  'WebView.setTextarea': WebView.setTextArea,
 }

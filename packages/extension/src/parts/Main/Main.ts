@@ -30,8 +30,21 @@ const webViewProvider = {
   },
   commands: {
     async handleInput(text) {},
-    async handleDoubleClick(x, y) {
-      console.log({ x, y })
+    async handleDoubleClick(row, column) {
+      const parsedRow = parseInt(row)
+      const parsedColumn = parseInt(column)
+      // @ts-ignore
+      const parsed = webViewProvider.parsed
+      const cursor = {
+        rowIndex: parsedRow,
+        columnIndex: parsedColumn,
+        textArea: true,
+      }
+      await CsvWorker.invoke('WebView.setCursor', id, parsedRow, parsedColumn)
+      await CsvWorker.invoke('WebView.setTextarea', id, cursor.textArea)
+      const newDom = await CsvWorker.invoke('Csv.getVirtualDom', parsed, cursor)
+      // @ts-ignore
+      await webViewProvider.webView.invoke('setDom', newDom)
     },
     async handleClick(row, column) {
       const parsedRow = parseInt(row)
