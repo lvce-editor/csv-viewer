@@ -41,7 +41,7 @@ const setDom = (vdom) => {
 const initialize = (vdom) => {
   const $App = document.createElement('div')
   $App.addEventListener('dblclick', handleDoubleClick)
-  $App.addEventListener('click', handleClick)
+  $App.addEventListener('pointerdown', handleClick)
   $App.className = 'App'
   document.body.append($App)
   setDom(vdom)
