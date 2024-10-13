@@ -41,6 +41,9 @@ const render = (vdom) => {
   if (vdom.name) {
     $Element.name = vdom.name
   }
+  if (vdom.value) {
+    $Element.value = vdom.value
+  }
   $Element.append(...$$children)
   return $Element
 }
