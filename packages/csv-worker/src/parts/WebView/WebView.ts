@@ -22,6 +22,29 @@ export const getCursor = (id: number) => {
   return WebViewStates.get(id)
 }
 
+const getNewWebView = (webView: any, key: string): any => {
+  let rowIndex = webView.rowIndex
+  let columnIndex = webView.columnIndex
+  if (key === 'ArrowLeft') {
+    columnIndex--
+  } else if (key === 'ArrowRight') {
+    columnIndex++
+  } else if (key === 'ArrowDown') {
+    rowIndex++
+  } else if (key === 'ArrowUp') {
+    rowIndex--
+  }
+  return {
+    ...webView,
+    rowIndex,
+    columnIndex,
+  }
+}
 export const handleKeyDown = (id: number, key: string) => {
-  console.log({ key })
+  const webView = WebViewStates.get(id)
+  if (!webView) {
+    throw new Error(`webview not found ${id}`)
+  }
+  const newWebView = getNewWebView(webView, key)
+  WebViewStates.set(id, newWebView)
 }
