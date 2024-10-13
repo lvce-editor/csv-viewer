@@ -6,7 +6,6 @@ const webViewProvider = {
     // TODO ask csv worker to create virtual dom
     // TODO support connecting state to webview
     // @ts-ignore
-    this.aggregates = aggregrates
     // @ts-ignore
     this.webView = webView
   },
