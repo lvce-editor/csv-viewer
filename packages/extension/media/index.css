@@ -44,6 +44,10 @@ body {
   font-weight: bold;
 }
 
+.TableCellFocused {
+  background: lightblue;
+}
+
 .Content {
   contain: content;
 }
