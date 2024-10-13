@@ -26,6 +26,11 @@ await replace({
   occurrence: 'src/csvViewerMain.ts',
   replacement: 'dist/csvViewerMain.js',
 })
+await replace({
+  path: path.join(root, 'dist', commitHash, 'config', 'webExtensions.json'),
+  occurrence: '../csv-worker/src/csvWorkerMain.ts',
+  replacement: './csv-worker/dist/csvWorkerMainjs',
+})
 
 const pathPrefix = '/csv-viewer'
 const webViewsPath = join(root, 'dist', commitHash, 'config', 'webViews.json')
