@@ -1,7 +1,4 @@
-// TODO use virtual dom in worker
-
 const render = (vdom) => {
-  console.log({ vdom })
   if (vdom.type === 'text') {
     const node = document.createTextNode(vdom.value)
     return node
