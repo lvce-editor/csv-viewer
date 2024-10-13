@@ -3,7 +3,6 @@ import { exportStatic } from '@lvce-editor/shared-process'
 import { cp, readFile, rm, writeFile } from 'node:fs/promises'
 import path, { join } from 'node:path'
 import { root } from './root.js'
-import { cpSync } from 'node:fs'
 
 await import('./build.js')
 
