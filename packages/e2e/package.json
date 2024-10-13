@@ -1,0 +1,17 @@
+{
+  "name": "e2e",
+  "version": "0.0.0-dev",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "e2e": "node ./node_modules/@lvce-editor/test-with-playwright/bin/test-with-playwright.js --only-extension=../extension --test-path=.",
+    "e2e:headless": "node ./node_modules/@lvce-editor/test-with-playwright/bin/test-with-playwright.js  --only-extension=../extension --test-path=. --headless"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@lvce-editor/test-with-playwright": "^1.1.0"
+  }
+}
