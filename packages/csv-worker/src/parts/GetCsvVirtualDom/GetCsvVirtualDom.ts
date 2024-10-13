@@ -116,7 +116,7 @@ export const getCsvVirtualDom = (parsed: ParsedCsv, cursor: any): any => {
         top: `${y}px`,
       },
       name: 'TextArea',
-      value: parsed[cursor.rowIndex][cursor.columnIndex],
+      value: parsed?.[cursor.rowIndex]?.[cursor.columnIndex] || '',
       children: [],
     })
   }
