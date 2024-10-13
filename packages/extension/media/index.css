@@ -8,6 +8,7 @@
   --Foreground: rgb(156, 162, 160);
   --TableBorderColor: rgba(204, 204, 204, 0.13);
   --ActiveSelectionBackground: #515f59;
+  --ActiveSelectionForeground: white;
 }
 
 html,
@@ -59,6 +60,7 @@ body {
 
 .TableCellFocused {
   background: var(--ActiveSelectionBackground);
+  color: var(--ActiveSelectionForeground);
 }
 
 .Content {
