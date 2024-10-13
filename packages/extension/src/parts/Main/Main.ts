@@ -1,5 +1,7 @@
 import * as CsvWorker from '../CsvWorker/CsvWorker.ts'
 
+const id = 1
+
 const webViewProvider = {
   id: 'builtin.csv-viewer',
   async create(webView, uri) {
@@ -9,6 +11,7 @@ const webViewProvider = {
     const parsed = await CsvWorker.invoke('Csv.parse', content)
     const vdom = await CsvWorker.invoke('Csv.getVirtualDom', parsed)
     await webView.invoke('initialize', vdom)
+    await CsvWorker.invoke('WebView.create', id)
 
     // TODO ask csv worker to create virtual dom
     // TODO support connecting state to webview
@@ -29,7 +32,9 @@ const webViewProvider = {
       console.log({ x, y })
     },
     async handleClick(row, column) {
-      console.log({ row, column })
+      const parsedRow = parseInt(row)
+      const parsedColumn = parseInt(column)
+      await CsvWorker.invoke('WebView.setCursor', id, parsedRow, parsedColumn)
     },
   },
 }

@@ -3,10 +3,11 @@ const handleDoubleClick = async (event) => {
   const { dataset } = target
   await rpc.invoke('handleDoubleClick', dataset.row, dataset.column)
 }
+
 const handleClick = async (event) => {
   const { target } = event
   const { dataset } = target
-  await rpc.invoke('handleDoubleClick', dataset.row, dataset.column)
+  await rpc.invoke('handleClick', dataset.row, dataset.column)
 }
 
 const render = (vdom) => {
