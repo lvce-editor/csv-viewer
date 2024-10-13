@@ -10,6 +10,11 @@ const handleClick = async (event) => {
   await rpc.invoke('handleClick', dataset.row, dataset.column)
 }
 
+const handleKeyDown = async (event) => {
+  const { key } = event
+  await rpc.invoke('handleKeyDown', key)
+}
+
 const render = (vdom) => {
   if (vdom.type === 'text') {
     const node = document.createTextNode(vdom.value)
@@ -42,6 +47,7 @@ const initialize = (vdom) => {
   const $App = document.createElement('div')
   $App.addEventListener('dblclick', handleDoubleClick)
   $App.addEventListener('pointerdown', handleClick)
+  window.addEventListener('keydown', handleKeyDown)
   $App.className = 'App'
   document.body.append($App)
   setDom(vdom)

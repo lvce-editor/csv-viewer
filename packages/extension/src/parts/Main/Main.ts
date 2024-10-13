@@ -47,6 +47,15 @@ const webViewProvider = {
       // @ts-ignore
       await webViewProvider.webView.invoke('setDom', newDom)
     },
+    async handleKeyDown(key) {
+      await CsvWorker.invoke('WebView.handleKeyDown', id, key)
+      const cursor = await CsvWorker.invoke('WebView.getCursor', id)
+      // @ts-ignore
+      const parsed = webViewProvider.parsed
+      const newDom = await CsvWorker.invoke('Csv.getVirtualDom', parsed, cursor)
+      // @ts-ignore
+      await webViewProvider.webView.invoke('setDom', newDom)
+    },
   },
 }
 
