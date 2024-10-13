@@ -11,6 +11,10 @@
   --ActiveSelectionForeground: white;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 html,
 body {
   width: 100%;
@@ -71,11 +75,17 @@ body {
 
 .TextArea {
   width: 100px;
-  height: 20px;
+  height: 19px;
   contain: strict;
   position: absolute;
   top: 0;
   left: 0;
-  background: white;
+  background: var(--MainBackground);
   z-index: 1;
+  resize: none;
+  outline: none;
+  border: none;
+  color: white;
+  padding-left: 10px;
+  font-size: 13px;
 }

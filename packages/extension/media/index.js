@@ -8,6 +8,9 @@ const handleDoubleClick = async (event) => {
 const handlePointerDown = async (event) => {
   const { target, detail } = event
   const { dataset } = target
+  if (target.nodeName === 'TEXTAREA') {
+    return
+  }
   await rpc.invoke('handleClick', dataset.row, dataset.column)
 }
 
@@ -41,6 +44,9 @@ const render = (vdom) => {
   if (vdom.name) {
     $Element.name = vdom.name
   }
+  if (vdom.value) {
+    $Element.value = vdom.value
+  }
   $Element.append(...$$children)
   return $Element
 }
@@ -59,11 +65,15 @@ const replace = ($Parent, $Old, $New) => {
   }
   const oldChildLength = $Old.children.length
   const newChildLength = $New.children.length
-  for (let i = 0; i < oldChildLength; i++) {
+  const minLength = Math.min(oldChildLength, newChildLength)
+  for (let i = 0; i < minLength; i++) {
     replace($Old, $Old.children[i], $New.children[i])
   }
-  for (let i = oldChildLength; i < newChildLength; i++) {
+  for (let i = minLength; i < newChildLength; i++) {
     $Old.append($New.children[i])
+  }
+  for (let i = minLength; i < oldChildLength; i++) {
+    $Old.lastChild.remove()
   }
 }
 
