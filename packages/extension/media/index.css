@@ -61,6 +61,6 @@ body {
 
 .TextArea {
   width: 100px;
-  height: 100px;
+  height: 20px;
   contain: strict;
 }
