@@ -25,6 +25,9 @@ const webViewProvider = {
   },
   commands: {
     async handleInput(text) {},
+    async handleDoubleClick(x, y) {
+      console.log({ x, y })
+    },
   },
 }
 

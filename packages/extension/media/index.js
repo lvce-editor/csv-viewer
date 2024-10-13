@@ -1,3 +1,8 @@
+const handleDoubleClick = async (event) => {
+  const { clientX, clientY } = event
+  await rpc.invoke('handleDoubleClick', clientX, clientY)
+}
+
 const render = (vdom) => {
   if (vdom.type === 'text') {
     const node = document.createTextNode(vdom.value)
@@ -15,6 +20,7 @@ const render = (vdom) => {
 
 const initialize = (vdom) => {
   const $App = document.createElement('div')
+  $App.addEventListener('dblclick', handleDoubleClick)
   $App.className = 'App'
   const $Rendered = render(vdom)
   $App.append($Rendered)
