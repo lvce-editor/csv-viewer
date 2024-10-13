@@ -45,6 +45,8 @@ const webViewProvider = {
       const newDom = await CsvWorker.invoke('Csv.getVirtualDom', parsed, cursor)
       // @ts-ignore
       await webViewProvider.webView.invoke('setDom', newDom)
+      // @ts-ignore
+      await webViewProvider.webView.invoke('focusTextArea')
     },
     async handleClick(row, column) {
       const parsedRow = parseInt(row)
