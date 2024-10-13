@@ -1,6 +1,21 @@
 html,
 body {
+  width: 100%;
   height: 100%;
   background: orange;
   margin: 0;
+}
+
+.App {
+  width: 100%;
+  height: 100%;
+  contain: strict;
+}
+
+.Content {
+  padding: 20px;
+  width: 100%;
+  height: 100%;
+  contain: strict;
+  white-space: pre;
 }
