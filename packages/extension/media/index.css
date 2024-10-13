@@ -64,11 +64,18 @@ body {
 }
 
 .Content {
-  contain: content;
+  contain: strict;
+  width: 100%;
+  height: 100%;
 }
 
 .TextArea {
   width: 100px;
   height: 20px;
   contain: strict;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: white;
+  z-index: 1;
 }
