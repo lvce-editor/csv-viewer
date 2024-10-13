@@ -1,6 +1,12 @@
 const handleDoubleClick = async (event) => {
-  const { clientX, clientY } = event
-  await rpc.invoke('handleDoubleClick', clientX, clientY)
+  const { target } = event
+  const { dataset } = target
+  await rpc.invoke('handleDoubleClick', dataset.row, dataset.column)
+}
+const handleClick = async (event) => {
+  const { target } = event
+  const { dataset } = target
+  await rpc.invoke('handleDoubleClick', dataset.row, dataset.column)
 }
 
 const render = (vdom) => {
@@ -14,6 +20,12 @@ const render = (vdom) => {
   if (vdom.className) {
     $Element.className = vdom.className
   }
+  if (vdom['data-row'] !== undefined) {
+    $Element.dataset.row = vdom['data-row']
+  }
+  if (vdom['data-column'] !== undefined) {
+    $Element.dataset.column = vdom['data-column']
+  }
   $Element.append(...$$children)
   return $Element
 }
@@ -21,6 +33,7 @@ const render = (vdom) => {
 const initialize = (vdom) => {
   const $App = document.createElement('div')
   $App.addEventListener('dblclick', handleDoubleClick)
+  $App.addEventListener('click', handleClick)
   $App.className = 'App'
   const $Rendered = render(vdom)
   $App.append($Rendered)
