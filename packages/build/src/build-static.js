@@ -1,6 +1,6 @@
 import { replace } from '@lvce-editor/package-extension'
 import { exportStatic } from '@lvce-editor/shared-process'
-import { cp, readFile, rm, writeFile } from 'node:fs/promises'
+import { cp, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import path, { join } from 'node:path'
 import { root } from './root.js'
 
@@ -40,3 +40,7 @@ await rm(join(root, 'dist', commitHash, 'playground'), { recursive: true, force:
 await cp(join(root, 'packages', 'integration', 'files'), join(root, 'dist', commitHash, 'playground'), {
   recursive: true,
 })
+
+const dirents = await readdir(join(root, 'dist', commitHash, 'playground'))
+const fileMap = dirents.map((dirent) => `/playground/${dirent}`)
+await writeFile(join(root, 'dist', commitHash, 'config', 'fileMap.json'), JSON.stringify(fileMap, null, 2) + '\n')
