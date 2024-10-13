@@ -7,4 +7,6 @@ export const commandMap = {
   'Csv.getVirtualDom': GetCsvVirtualDom.getCsvVirtualDom,
   'WebView.create': WebView.create,
   'WebView.setCursor': WebView.setCursor,
+  'WebView.getCursor': WebView.getCursor,
+  'WebView.handleKeyDown': WebView.handleKeyDown,
 }

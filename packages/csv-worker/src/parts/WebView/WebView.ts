@@ -17,3 +17,11 @@ export const setCursor = (id: number, rowIndex: number, columnIndex: number) => 
   }
   WebViewStates.set(id, newWebView)
 }
+
+export const getCursor = (id: number) => {
+  return WebViewStates.get(id)
+}
+
+export const handleKeyDown = (id: number, key: string) => {
+  console.log({ key })
+}
