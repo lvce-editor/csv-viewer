@@ -4,6 +4,7 @@ export const create = (id: number) => {
   const webview = {
     rowIndex: 0,
     columnIndex: 0,
+    textArea: false,
   }
   WebViewStates.set(id, webview)
 }
@@ -14,6 +15,15 @@ export const setCursor = (id: number, rowIndex: number, columnIndex: number) => 
     ...webView,
     rowIndex,
     columnIndex,
+  }
+  WebViewStates.set(id, newWebView)
+}
+
+export const setTextArea = (id: number, textArea: boolean) => {
+  const webView = WebViewStates.get(id)
+  const newWebView = {
+    ...webView,
+    textArea,
   }
   WebViewStates.set(id, newWebView)
 }

@@ -5,8 +5,8 @@ const handleDoubleClick = async (event) => {
   await rpc.invoke('handleDoubleClick', dataset.row, dataset.column)
 }
 
-const handleClick = async (event) => {
-  const { target } = event
+const handlePointerDown = async (event) => {
+  const { target, detail } = event
   const { dataset } = target
   await rpc.invoke('handleClick', dataset.row, dataset.column)
 }
@@ -37,17 +37,38 @@ const render = (vdom) => {
   return $Element
 }
 
+const replace = ($Parent, $Old, $New) => {
+  if (!$Old) {
+    $Parent.append($New)
+    return
+  }
+  if ($Old.nodeName !== $New.nodeName) {
+    $Old.replaceWith($New)
+    return
+  }
+  if ($Old.className !== $New.className) {
+    $Old.className = $New.className
+  }
+  const oldChildLength = $Old.children.length
+  const newChildLength = $New.children.length
+  for (let i = 0; i < oldChildLength; i++) {
+    replace($Old, $Old.children[i], $New.children[i])
+  }
+  for (let i = oldChildLength; i < newChildLength; i++) {
+    $Old.append($New.children[i])
+  }
+}
+
 const setDom = (vdom) => {
   const $Rendered = render(vdom)
   const $App = document.querySelector('.App')
-  $App?.replaceChildren()
-  $App?.append($Rendered)
+  replace($App, $App?.childNodes[0], $Rendered)
 }
 
 const initialize = (vdom) => {
   const $App = document.createElement('div')
-  $App.addEventListener('dblclick', handleDoubleClick)
-  $App.addEventListener('pointerdown', handleClick)
+  window.addEventListener('dblclick', handleDoubleClick, { capture: true })
+  window.addEventListener('pointerdown', handlePointerDown)
   window.addEventListener('keydown', handleKeyDown)
   $App.className = 'App'
   document.body.append($App)
