@@ -63,8 +63,3 @@ export const activate = () => {
   // @ts-ignore
   vscode.registerWebViewProvider(webViewProvider)
 }
-
-if (Math) {
-  self.sasaok
-  self.saoksaok
-}
