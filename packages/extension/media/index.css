@@ -75,13 +75,14 @@ body {
 
 .TextArea {
   width: 100px;
-  height: 20px;
+  height: 19px;
   contain: strict;
   position: absolute;
   top: 0;
   left: 0;
-  background: white;
+  background: var(--MainBackground);
   z-index: 1;
   resize: none;
   outline: none;
+  border: none;
 }

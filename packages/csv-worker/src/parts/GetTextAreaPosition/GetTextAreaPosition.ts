@@ -12,8 +12,9 @@ export const getTextAreaPosition = (cursor: Cursor): Position => {
   if (cursor.columnIndex >= 2) {
     x += (cursor.columnIndex - 1) * columnWidth
   }
+  x += 1
   return {
     x,
-    y: rowHeight * (cursor.rowIndex + 1),
+    y: rowHeight * (cursor.rowIndex + 1) + 1,
   }
 }
