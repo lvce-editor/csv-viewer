@@ -58,3 +58,9 @@ body {
 .Content {
   contain: content;
 }
+
+.TextArea {
+  width: 100px;
+  height: 100px;
+  contain: strict;
+}
