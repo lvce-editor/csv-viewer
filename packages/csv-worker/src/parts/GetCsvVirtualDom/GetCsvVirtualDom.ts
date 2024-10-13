@@ -6,6 +6,9 @@ const getFocused = (cursor: any, rowIndex: number, columnIndex: number) => {
   if (!cursor) {
     return false
   }
+  if (cursor.textArea) {
+    return false
+  }
   return cursor.rowIndex === rowIndex && cursor.columnIndex === columnIndex
 }
 
