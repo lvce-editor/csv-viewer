@@ -17,5 +17,14 @@ body {
   width: 100%;
   height: 100%;
   contain: strict;
-  white-space: pre;
+}
+
+.Row {
+  contain: content;
+  display: flex;
+  gap: 10px;
+}
+
+.Content {
+  contain: content;
 }
