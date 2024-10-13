@@ -2,7 +2,6 @@ html,
 body {
   width: 100%;
   height: 100%;
-  background: orange;
   margin: 0;
 }
 
@@ -19,9 +18,12 @@ body {
 
 .Table {
   contain: content;
+  border: 1px solid;
+  border-collapse: collapse;
 }
 
-.Cell {
+.TableCell {
+  border: 1px solid black;
   contain: content;
 }
 

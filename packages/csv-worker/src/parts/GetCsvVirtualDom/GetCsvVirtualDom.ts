@@ -11,7 +11,7 @@ const getCsvTableHeadDom = (rows: readonly string[]) => {
   for (const row of rows) {
     children.push({
       type: 'th',
-      className: 'TableHeading',
+      className: 'TableHeading TableCell',
       children: [
         {
           type: 'text',
@@ -24,7 +24,13 @@ const getCsvTableHeadDom = (rows: readonly string[]) => {
   return {
     type: 'thead',
     className: 'TableHead',
-    children,
+    children: [
+      {
+        type: 'tr',
+        className: 'TableRow',
+        children,
+      },
+    ],
   }
 }
 
@@ -75,7 +81,7 @@ export const getCsvVirtualDom = (parsed: ParsedCsv): any => {
     className: 'Content',
     children: [
       {
-        type: 'div',
+        type: 'table',
         className: 'Table',
         children: [getCsvTableHeadDom(parsed.header), getCsvTableBodyDom(parsed.content)],
       },
