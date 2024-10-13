@@ -42,6 +42,8 @@ const getCsvTableBodyDom = (rows: readonly CsvRow[]) => {
     children.push({
       type: 'td',
       className: 'TableCell TableCellInfo',
+      'data-row': i,
+      'data-column': 0,
       children: [
         {
           type: 'text',
@@ -49,10 +51,13 @@ const getCsvTableBodyDom = (rows: readonly CsvRow[]) => {
         },
       ],
     })
-    for (const cell of row) {
+    for (let j = 0; j < row.length; j++) {
+      const cell = row[j]
       children.push({
         type: 'td',
         className: 'TableCell',
+        'data-row': i,
+        'data-column': j,
         children: [
           {
             type: 'text',

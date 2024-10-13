@@ -28,6 +28,9 @@ const webViewProvider = {
     async handleDoubleClick(x, y) {
       console.log({ x, y })
     },
+    async handleClick(row, column) {
+      console.log({ row, column })
+    },
   },
 }
 
