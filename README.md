@@ -1,4 +1,4 @@
-# csb-viewer
+# csv-viewer
 
 ## Contributing
 
