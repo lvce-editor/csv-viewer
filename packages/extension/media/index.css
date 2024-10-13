@@ -3,7 +3,11 @@
   --TableCellWidth: 120px;
   --TableCellInfoBackground: white;
   --TableCellHeight: 20px;
-  --FontFamily: sans-serif;
+  --FontFamily: system-ui, Ubuntu, Droid Sans, sans-serif;
+  --MainBackground: #1e2324;
+  --Foreground: rgb(156, 162, 160);
+  --TableBorderColor: rgba(204, 204, 204, 0.13);
+  --ActiveSelectionBackground: #515f59;
 }
 
 html,
@@ -18,6 +22,8 @@ body {
   height: 100%;
   contain: strict;
   font-family: var(--FontFamily);
+  background: var(--MainBackground);
+  color: var(--Foreground);
 }
 
 .Content {
@@ -26,15 +32,16 @@ body {
 
 .Table {
   contain: content;
-  border: 1px solid;
+  border: 1px solid var(--TableBorderColor);
   border-collapse: collapse;
 }
 
 .TableCell {
-  border: 1px solid black;
+  border: 1px solid var(--TableBorderColor);
   contain: strict;
   width: var(--TableCellWidth);
   height: var(--TableCellHeight);
+  padding-left: 10px;
 }
 
 .TableCellInfo {
@@ -45,7 +52,7 @@ body {
 }
 
 .TableCellFocused {
-  background: lightblue;
+  background: var(--ActiveSelectionBackground);
 }
 
 .Content {
