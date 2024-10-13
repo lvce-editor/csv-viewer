@@ -8,6 +8,9 @@ const handleDoubleClick = async (event) => {
 const handlePointerDown = async (event) => {
   const { target, detail } = event
   const { dataset } = target
+  if (target.nodeName === 'TEXTAREA') {
+    return
+  }
   await rpc.invoke('handleClick', dataset.row, dataset.column)
 }
 
