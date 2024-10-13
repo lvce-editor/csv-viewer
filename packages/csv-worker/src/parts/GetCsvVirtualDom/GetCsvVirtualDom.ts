@@ -62,13 +62,13 @@ const getCsvTableBodyDom = (rows: readonly CsvRow[], cursor: any) => {
     })
     for (let j = 0; j < row.length; j++) {
       const cell = row[j]
-      const focused = getFocused(cursor, i, j)
+      const focused = getFocused(cursor, i, j + 1)
       const extraClass = focused ? 'TableCellFocused' : ''
       children.push({
         type: 'td',
         className: `TableCell ${extraClass}`,
         'data-row': i,
-        'data-column': j,
+        'data-column': j + 1,
         children: [
           {
             type: 'text',
