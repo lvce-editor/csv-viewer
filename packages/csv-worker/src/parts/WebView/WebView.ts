@@ -35,6 +35,12 @@ export const getCursor = (id: number) => {
 const getNewWebView = (webView: any, key: string): any => {
   let rowIndex = webView.rowIndex
   let columnIndex = webView.columnIndex
+  if (key === 'Enter') {
+    return {
+      ...webView,
+      textArea: false,
+    }
+  }
   if (key === 'ArrowLeft') {
     columnIndex--
   } else if (key === 'ArrowRight') {

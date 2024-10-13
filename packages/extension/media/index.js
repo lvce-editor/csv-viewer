@@ -93,7 +93,15 @@ const initialize = (vdom) => {
   setDom(vdom)
 }
 
+const focusTextArea = () => {
+  const $App = document.querySelector('.App')
+  const $TextArea = $App?.querySelector('.TextArea')
+  // @ts-ignore
+  $TextArea.focus()
+}
+
 const rpc = globalThis.lvceRpc({
   initialize,
   setDom,
+  focusTextArea,
 })
