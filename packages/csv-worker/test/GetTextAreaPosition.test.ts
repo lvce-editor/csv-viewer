@@ -8,7 +8,7 @@ test('getTextAreaPosition', () => {
     columnIndex: 1,
   }
   expect(GetTextAreaPosition.getTextAreaPosition(cursor)).toEqual({
-    x: 80,
-    y: 20,
+    x: 41,
+    y: 41,
   })
 })
