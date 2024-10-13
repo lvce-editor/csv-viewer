@@ -1,0 +1,10 @@
+{
+  "files": [],
+  "include": [],
+  "references": [
+    { "path": "./packages/extension" },
+    { "path": "./packages/e2e" },
+    { "path": "./packages/csv-worker" },
+    { "path": "./packages/build" }
+  ]
+}
