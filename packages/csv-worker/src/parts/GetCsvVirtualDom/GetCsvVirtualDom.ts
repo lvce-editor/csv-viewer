@@ -96,7 +96,6 @@ const getCsvTableBodyDom = (rows: readonly Row[], cursor: any) => {
 }
 
 export const getCsvVirtualDom = (parsed: ParsedCsv, cursor: any): any => {
-  console.log({ parsed, cursor })
   const children: any[] = [
     {
       type: 'table',

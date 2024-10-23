@@ -10,7 +10,6 @@ const webViewProvider = {
 
     const parsed = await CsvWorker.invoke('Csv.parse', content)
     await CsvWorker.invoke('WebView.create', id)
-    console.log({ parsed })
     await CsvWorker.invoke('WebView.setHeader', id, parsed.header)
     await CsvWorker.invoke('WebView.setCells', id, parsed.content)
     const vdom = await CsvWorker.invoke('WebView.getVirtualDom', id)
