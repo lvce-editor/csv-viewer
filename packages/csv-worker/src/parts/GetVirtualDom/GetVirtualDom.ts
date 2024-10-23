@@ -3,9 +3,15 @@ import * as GetCsvVirtualDom from '../GetCsvVirtualDom/GetCsvVirtualDom.ts'
 
 export const getVirtualDom = (id: number): any => {
   const webView = WebViewStates.get(id)
-  const dom = GetCsvVirtualDom.getCsvVirtualDom({
-    header: webView.header,
-    content: webView.cells,
-  })
+  const dom = GetCsvVirtualDom.getCsvVirtualDom(
+    {
+      header: webView.header,
+      content: webView.cells,
+    },
+    {
+      rowIndex: webView.rowIndex,
+      columnIndex: webView.columnIndex,
+    },
+  )
   return dom
 }

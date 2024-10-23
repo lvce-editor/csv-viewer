@@ -1,6 +1,6 @@
-import type { CsvRow } from '../CsvRow/CsvRow.ts'
-import type { ParsedCsv } from '../ParsedCsv/ParsedCsv.ts'
 import * as GetTextAreaPosition from '../GetTextAreaPosition/GetTextAreaPosition.ts'
+import type { ParsedCsv } from '../ParsedCsv/ParsedCsv.ts'
+import { Row } from '../WebView/WebView.ts'
 
 const getFocused = (cursor: any, rowIndex: number, columnIndex: number) => {
   if (!cursor) {
@@ -45,7 +45,7 @@ const getCsvTableHeadDom = (rows: readonly string[], cursor: any) => {
   }
 }
 
-const getCsvTableBodyDom = (rows: readonly CsvRow[], cursor: any) => {
+const getCsvTableBodyDom = (rows: readonly Row[], cursor: any) => {
   const dom: any[] = []
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i]
