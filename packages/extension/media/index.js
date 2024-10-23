@@ -16,6 +16,9 @@ const handlePointerDown = async (event) => {
 
 const handleKeyDown = async (event) => {
   const { key } = event
+  if (key === 'Enter') {
+    return
+  }
   await rpc.invoke('handleKeyDown', key)
 }
 
@@ -56,6 +59,10 @@ const replace = ($Parent, $Old, $New) => {
     $Parent.append($New)
     return
   }
+  if ($Old instanceof Text && $New instanceof Text) {
+    $Old.nodeValue = $New.nodeValue
+    return
+  }
   if ($Old.nodeName !== $New.nodeName) {
     $Old.replaceWith($New)
     return
@@ -63,14 +70,14 @@ const replace = ($Parent, $Old, $New) => {
   if ($Old.className !== $New.className) {
     $Old.className = $New.className
   }
-  const oldChildLength = $Old.children.length
-  const newChildLength = $New.children.length
+  const oldChildLength = $Old.childNodes.length
+  const newChildLength = $New.childNodes.length
   const minLength = Math.min(oldChildLength, newChildLength)
   for (let i = 0; i < minLength; i++) {
-    replace($Old, $Old.children[i], $New.children[i])
+    replace($Old, $Old.childNodes[i], $New.childNodes[i])
   }
   for (let i = minLength; i < newChildLength; i++) {
-    $Old.append($New.children[i])
+    $Old.append($New.childNodes[i])
   }
   for (let i = minLength; i < oldChildLength; i++) {
     $Old.lastChild.remove()
@@ -78,6 +85,7 @@ const replace = ($Parent, $Old, $New) => {
 }
 
 const setDom = (vdom) => {
+  console.log({ vdom })
   const $Rendered = render(vdom)
   const $App = document.querySelector('.App')
   replace($App, $App?.childNodes[0], $Rendered)
