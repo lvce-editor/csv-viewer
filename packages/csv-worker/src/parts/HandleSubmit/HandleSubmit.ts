@@ -12,6 +12,5 @@ export const handleSubmit = (id: number): void => {
     textArea: false,
     cells: newCells,
   }
-  console.log({ newCells })
   WebViewStates.set(id, newState)
 }

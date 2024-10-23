@@ -85,7 +85,6 @@ const replace = ($Parent, $Old, $New) => {
 }
 
 const setDom = (vdom) => {
-  console.log({ vdom })
   const $Rendered = render(vdom)
   const $App = document.querySelector('.App')
   replace($App, $App?.childNodes[0], $Rendered)
