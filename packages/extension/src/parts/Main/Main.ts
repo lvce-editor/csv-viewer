@@ -60,6 +60,12 @@ const webViewProvider = {
       // @ts-ignore
       await webViewProvider.webView.invoke('setDom', newDom)
     },
+    async handleCancel() {
+      await CsvWorker.invoke('WebView.setTextarea', id, false)
+      const newDom = await CsvWorker.invoke('WebView.getVirtualDom', id)
+      // @ts-ignore
+      await webViewProvider.webView.invoke('setDom', newDom)
+    },
     async handleInput(value) {
       await CsvWorker.invoke('WebView.handleInput', id, value)
     },
