@@ -12,6 +12,7 @@ const webViewProvider = {
     const vdom = await CsvWorker.invoke('Csv.getVirtualDom', parsed)
     await webView.invoke('initialize', vdom)
     await CsvWorker.invoke('WebView.create', id)
+    await CsvWorker.invoke('WebView.setCells', id, parsed.content)
 
     // TODO ask csv worker to create virtual dom
     // TODO support connecting state to webview
@@ -29,7 +30,6 @@ const webViewProvider = {
     // })
   },
   commands: {
-    async handleInput(text) {},
     async handleDoubleClick(row, column) {
       const parsedRow = parseInt(row)
       const parsedColumn = parseInt(column)
@@ -40,6 +40,7 @@ const webViewProvider = {
         columnIndex: parsedColumn,
         textArea: true,
       }
+      console.log({ parsedRow, parsedColumn })
       await CsvWorker.invoke('WebView.setCursor', id, parsedRow, parsedColumn)
       await CsvWorker.invoke('WebView.setTextarea', id, cursor.textArea)
       const newDom = await CsvWorker.invoke('Csv.getVirtualDom', parsed, cursor)
@@ -70,6 +71,14 @@ const webViewProvider = {
       const newDom = await CsvWorker.invoke('Csv.getVirtualDom', parsed, cursor)
       // @ts-ignore
       await webViewProvider.webView.invoke('setDom', newDom)
+    },
+    async handleSubmit() {
+      await CsvWorker.invoke('WebView.handleSubmit', id)
+      const cells = await CsvWorker.invoke('WebView.getCells', id)
+      console.log({ cells })
+    },
+    async handleInput(value) {
+      await CsvWorker.invoke('WebView.handleInput', id, value)
     },
   },
 }
