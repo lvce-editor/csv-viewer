@@ -15,6 +15,9 @@ export const startWorker = async (rpc) => {
   return {
     execute(commandId, ...args) {
       const command = commandMap[commandId]
+      if (!command) {
+        throw new Error(`command not found ${commandId}`)
+      }
       return command(...args)
     },
   }

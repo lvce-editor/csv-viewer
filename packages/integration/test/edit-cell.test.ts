@@ -10,7 +10,7 @@ test.skip('edit cell', async () => {
   await worker.execute('WebView.create', id)
   await worker.execute('WebView.setCells', id, [['a']])
   await worker.execute('WebView.setCursor', id, 0, 0)
-  await worker.execute('WebView.setTextArea', id, true)
+  await worker.execute('WebView.setTextarea', id, true)
   await worker.execute('WebView.handleInput', id, 'b')
   await worker.execute('WebView.handleSubmit', id)
   expect(await worker.execute('WebView.getCells', id)).toEqual([['b']])
