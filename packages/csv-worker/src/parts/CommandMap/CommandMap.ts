@@ -1,4 +1,5 @@
 import * as Create from '../Create/Create.ts'
+import * as GetCells from '../GetCells/GetCells.ts'
 import * as GetCsvVirtualDom from '../GetCsvVirtualDom/GetCsvVirtualDom.ts'
 import * as GetCursor from '../GetCursor/GetCursor.ts'
 import * as GetPosition from '../GetPosition/GetPosition.ts'
@@ -14,6 +15,7 @@ export const commandMap = {
   'Csv.getVirtualDom': GetCsvVirtualDom.getCsvVirtualDom,
   'Csv.parse': ParseCsv.parseCsv,
   'WebView.create': Create.create,
+  'WebView.getCells': GetCells.getCells,
   'WebView.getCursor': GetCursor.getCursor,
   'WebView.getPosition': GetPosition.getPosition,
   'WebView.handleInput': HandleInput.handleInput,
