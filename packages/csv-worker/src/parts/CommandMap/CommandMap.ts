@@ -1,6 +1,5 @@
 import * as Create from '../Create/Create.ts'
 import * as GetCells from '../GetCells/GetCells.ts'
-import * as GetCsvVirtualDom from '../GetCsvVirtualDom/GetCsvVirtualDom.ts'
 import * as GetCursor from '../GetCursor/GetCursor.ts'
 import * as GetPosition from '../GetPosition/GetPosition.ts'
 import * as GetVirtualDom from '../GetVirtualDom/GetVirtualDom.ts'
@@ -15,7 +14,6 @@ import * as SetTextArea from '../SetTextArea/SetTextArea.ts'
 
 export const commandMap = {
   // deprecated
-  'Csv.getVirtualDom': GetCsvVirtualDom.getCsvVirtualDom,
   'Csv.parse': ParseCsv.parseCsv,
 
   // new
