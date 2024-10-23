@@ -93,9 +93,24 @@ const initialize = (vdom) => {
   setDom(vdom)
 }
 
+const handleTextAreaKeyDown = async (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault()
+    await rpc.invoke('handleSubmit')
+  }
+}
+
+const handleTextAreaInput = async (event) => {
+  const { target } = event
+  const { value } = target
+  await rpc.invoke('handleInput', value)
+}
+
 const focusTextArea = () => {
   const $App = document.querySelector('.App')
   const $TextArea = $App?.querySelector('.TextArea')
+  $TextArea?.addEventListener('keydown', handleTextAreaKeyDown)
+  $TextArea?.addEventListener('input', handleTextAreaInput)
   // @ts-ignore
   $TextArea.focus()
 }
