@@ -8,6 +8,7 @@ export const create = (id: number): void => {
     textArea: false,
     cells: [],
     value: '',
+    header: [],
   }
   WebViewStates.set(id, webview)
 }

@@ -6,4 +6,5 @@ export interface WebView {
   readonly textArea: boolean
   readonly cells: readonly Row[]
   readonly value: string
+  readonly header: Row
 }
