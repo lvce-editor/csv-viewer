@@ -9,6 +9,7 @@ import * as HandleSubmit from '../HandleSubmit/HandleSubmit.ts'
 import * as ParseCsv from '../ParseCsv/ParseCsv.ts'
 import * as SetCells from '../SetCells/SetCells.ts'
 import * as SetCursor from '../SetCursor/SetCursor.ts'
+import * as SetHeader from '../SetHeader/SetHeader.ts'
 import * as SetTextArea from '../SetTextArea/SetTextArea.ts'
 
 export const commandMap = {
@@ -23,5 +24,6 @@ export const commandMap = {
   'WebView.handleSubmit': HandleSubmit.handleSubmit,
   'WebView.setCells': SetCells.setCells,
   'WebView.setCursor': SetCursor.setCursor,
+  'WebView.setHeader': SetHeader.setHeader,
   'WebView.setTextarea': SetTextArea.setTextArea,
 }
