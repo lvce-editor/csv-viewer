@@ -1,4 +1,4 @@
-type Row = readonly string[]
+export type Row = readonly string[]
 
 export interface WebView {
   readonly rowIndex: number
