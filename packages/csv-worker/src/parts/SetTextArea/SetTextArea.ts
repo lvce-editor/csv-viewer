@@ -7,6 +7,5 @@ export const setTextArea = (id: number, textArea: boolean): void => {
     ...webView,
     textArea,
   }
-  console.log({ textArea })
   WebViewStates.set(id, newWebView)
 }
