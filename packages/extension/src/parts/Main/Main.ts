@@ -9,11 +9,12 @@ const webViewProvider = {
     const content = await vscode.readFile(uri)
 
     const parsed = await CsvWorker.invoke('Csv.parse', content)
-    const vdom = await CsvWorker.invoke('Csv.getVirtualDom', parsed)
-    await webView.invoke('initialize', vdom)
     await CsvWorker.invoke('WebView.create', id)
+    console.log({ parsed })
     await CsvWorker.invoke('WebView.setHeader', id, parsed.header)
     await CsvWorker.invoke('WebView.setCells', id, parsed.content)
+    const vdom = await CsvWorker.invoke('WebView.getVirtualDom', id)
+    await webView.invoke('initialize', vdom)
 
     // TODO ask csv worker to create virtual dom
     // TODO support connecting state to webview
@@ -44,19 +45,19 @@ const webViewProvider = {
       const parsedRow = parseInt(row)
       const parsedColumn = parseInt(column)
       await CsvWorker.invoke('WebView.setCursor', id, parsedRow, parsedColumn)
-      const newDom = await CsvWorker.invoke('Csv.getVirtualDom', id)
+      const newDom = await CsvWorker.invoke('WebView.getVirtualDom', id)
       // @ts-ignore
       await webViewProvider.webView.invoke('setDom', newDom)
     },
     async handleKeyDown(key) {
       await CsvWorker.invoke('WebView.handleKeyDown', id, key)
-      const newDom = await CsvWorker.invoke('Csv.getVirtualDom', id)
+      const newDom = await CsvWorker.invoke('WebView.getVirtualDom', id)
       // @ts-ignore
       await webViewProvider.webView.invoke('setDom', newDom)
     },
     async handleSubmit() {
       await CsvWorker.invoke('WebView.handleSubmit', id)
-      const newDom = await CsvWorker.invoke('Csv.getVirtualDom', id)
+      const newDom = await CsvWorker.invoke('WebView.getVirtualDom', id)
       // @ts-ignore
       await webViewProvider.webView.invoke('setDom', newDom)
     },
