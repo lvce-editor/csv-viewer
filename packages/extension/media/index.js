@@ -98,6 +98,10 @@ const handleTextAreaKeyDown = async (event) => {
     event.preventDefault()
     await rpc.invoke('handleSubmit')
   }
+  if (event.key === 'Escape') {
+    event.preventDefault()
+    await rpc.invoke('handleCancel')
+  }
 }
 
 const handleTextAreaInput = async (event) => {

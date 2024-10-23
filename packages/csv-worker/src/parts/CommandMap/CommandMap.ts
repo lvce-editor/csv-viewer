@@ -10,6 +10,7 @@ import * as ParseCsv from '../ParseCsv/ParseCsv.ts'
 import * as SetCells from '../SetCells/SetCells.ts'
 import * as SetCursor from '../SetCursor/SetCursor.ts'
 import * as SetHeader from '../SetHeader/SetHeader.ts'
+import * as GetTextArea from '../GetTextArea/GetTextArea.ts'
 import * as SetTextArea from '../SetTextArea/SetTextArea.ts'
 
 export const commandMap = {
@@ -21,6 +22,8 @@ export const commandMap = {
   'WebView.getCells': GetCells.getCells,
   'WebView.getCursor': GetCursor.getCursor,
   'WebView.getPosition': GetPosition.getPosition,
+  'WebView.getTextArea': GetTextArea.getTextArea,
+  'WebView.getVirtualDom': GetVirtualDom.getVirtualDom,
   'WebView.handleInput': HandleInput.handleInput,
   'WebView.handleKeyDown': HandleKeyDown.handleKeyDown,
   'WebView.handleSubmit': HandleSubmit.handleSubmit,
@@ -28,5 +31,4 @@ export const commandMap = {
   'WebView.setCursor': SetCursor.setCursor,
   'WebView.setHeader': SetHeader.setHeader,
   'WebView.setTextarea': SetTextArea.setTextArea,
-  'WebView.getVirtualDom': GetVirtualDom.getVirtualDom,
 }
