@@ -20,6 +20,10 @@ const webViewProvider = {
     // @ts-ignore
     this.webView = webView
   },
+  async saveState() {
+    const state = await CsvWorker.invoke('WebView.saveState', id)
+    return state
+  },
   async open(uri, webView) {},
   commands: {
     async handleDoubleClick(row, column) {
