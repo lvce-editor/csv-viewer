@@ -12,6 +12,7 @@ import * as SaveState from '../SaveState/SaveState.ts'
 import * as SetCells from '../SetCells/SetCells.ts'
 import * as SetCursor from '../SetCursor/SetCursor.ts'
 import * as SetHeader from '../SetHeader/SetHeader.ts'
+import * as SetSavedState from '../SetSavedState/SetSavedState.ts'
 import * as SetTextArea from '../SetTextArea/SetTextArea.ts'
 
 export const commandMap = {
@@ -32,5 +33,6 @@ export const commandMap = {
   'WebView.setCells': SetCells.setCells,
   'WebView.setCursor': SetCursor.setCursor,
   'WebView.setHeader': SetHeader.setHeader,
+  'WebView.setSavedState': SetSavedState.setSavedState,
   'WebView.setTextarea': SetTextArea.setTextArea,
 }

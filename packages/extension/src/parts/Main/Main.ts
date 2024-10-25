@@ -4,12 +4,13 @@ const id = 1
 
 const webViewProvider = {
   id: 'builtin.csv-viewer',
-  async create(webView, uri) {
+  async create(webView, uri, savedState) {
     // @ts-ignore
     const content = await vscode.readFile(uri)
 
     const parsed = await CsvWorker.invoke('Csv.parse', content)
     await CsvWorker.invoke('WebView.create', id)
+    await CsvWorker.invoke('WebView.setSavedState', id, savedState)
     await CsvWorker.invoke('WebView.setHeader', id, parsed.header)
     await CsvWorker.invoke('WebView.setCells', id, parsed.content)
     const vdom = await CsvWorker.invoke('WebView.getVirtualDom', id)
