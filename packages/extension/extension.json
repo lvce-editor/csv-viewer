@@ -18,7 +18,6 @@
     {
       "id": "builtin.csv-viewer",
       "rpc": true,
-      "path": "media/index.html",
       "selector": [".csv"],
       "contentSecurityPolicy": ["default-src 'none'", "script-src 'self'", "style-src 'self'"],
       "elements": [
