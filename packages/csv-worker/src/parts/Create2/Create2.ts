@@ -11,7 +11,7 @@ export const create2 = async ({ port, savedState, webViewId, uri }) => {
   const content = await Rpc.invoke('WebView.readFile', uri)
   const parsed = ParseCsv.parseCsv(content)
 
-  Create.create(id)
+  Create.create(id, port)
   SetSavedState.setSavedState(id, savedState)
   SetHeader.setHeader(id, parsed.header)
   SetCells.setCells(id, parsed.content)

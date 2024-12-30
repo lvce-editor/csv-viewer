@@ -16,15 +16,27 @@ import * as SetCursor from '../SetCursor/SetCursor.ts'
 import * as SetHeader from '../SetHeader/SetHeader.ts'
 import * as SetSavedState from '../SetSavedState/SetSavedState.ts'
 import * as SetTextArea from '../SetTextArea/SetTextArea.ts'
+import { id } from '../Id/Id.ts'
+import * as WebViewStates from '../WebViewStates/WebViewStates.ts'
+
+const wrapCommand = (fn) => {
+  return async (...args) => {
+    await fn(id, ...args)
+    const newState = WebViewStates.get(id)
+    const { port } = newState
+    const dom = GetVirtualDom.getVirtualDom(id)
+    await port.invoke('setDom', dom)
+  }
+}
 
 export const commandMap = {
   // new
   'WebView.create': Create2.create2,
-  handleClick: HandleClick.handleClick,
-  handleKeyDown: HandleKeyDown.handleKeyDown,
-  handleSubmit: HandleSubmit.handleSubmit,
-  handleCancel: HandleCancel.handleCancel,
-  handleInput: HandleInput.handleInput,
+  handleClick: wrapCommand(HandleClick.handleClick),
+  handleKeyDown: wrapCommand(HandleKeyDown.handleKeyDown),
+  handleSubmit: wrapCommand(HandleSubmit.handleSubmit),
+  handleCancel: wrapCommand(HandleCancel.handleCancel),
+  handleInput: wrapCommand(HandleInput.handleInput),
 
   // deprecated
   'Csv.parse': ParseCsv.parseCsv,
