@@ -12,6 +12,7 @@ import * as HandleSubmit from '../HandleSubmit/HandleSubmit.ts'
 import * as ParseCsv from '../ParseCsv/ParseCsv.ts'
 import * as SaveState from '../SaveState/SaveState.ts'
 import * as SetCells from '../SetCells/SetCells.ts'
+import * as HandleDoubleClick from '../HandleDoubleClick/HandleDoubleClick.ts'
 import * as SetCursor from '../SetCursor/SetCursor.ts'
 import * as SetHeader from '../SetHeader/SetHeader.ts'
 import * as SetSavedState from '../SetSavedState/SetSavedState.ts'
@@ -37,6 +38,7 @@ export const commandMap = {
   handleSubmit: wrapCommand(HandleSubmit.handleSubmit),
   handleCancel: wrapCommand(HandleCancel.handleCancel),
   handleInput: wrapCommand(HandleInput.handleInput),
+  handleDoubleClick: HandleDoubleClick.handleDoubleClick,
 
   // deprecated
   'Csv.parse': ParseCsv.parseCsv,
