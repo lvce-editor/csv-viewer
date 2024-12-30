@@ -17,7 +17,7 @@
   "webViews": [
     {
       "id": "builtin.csv-viewer",
-      "rpc": true,
+      "rpc": "builtin.csv-viewer.csv-worker",
       "selector": [".csv"],
       "contentSecurityPolicy": ["default-src 'none'", "script-src 'self'", "style-src 'self'"],
       "elements": [

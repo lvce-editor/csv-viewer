@@ -1,9 +1,11 @@
-import * as Create from '../Create/Create.ts'
+import * as Create2 from '../Create2/Create2.ts'
 import * as GetCells from '../GetCells/GetCells.ts'
 import * as GetCursor from '../GetCursor/GetCursor.ts'
 import * as GetPosition from '../GetPosition/GetPosition.ts'
 import * as GetTextArea from '../GetTextArea/GetTextArea.ts'
 import * as GetVirtualDom from '../GetVirtualDom/GetVirtualDom.ts'
+import * as HandleCancel from '../HandleCancel/HandleCancel.ts'
+import * as HandleClick from '../HandleClick/HandleClick.ts'
 import * as HandleInput from '../HandleInput/HandleInput.ts'
 import * as HandleKeyDown from '../HandleKeyDown/HandleKeyDown.ts'
 import * as HandleSubmit from '../HandleSubmit/HandleSubmit.ts'
@@ -16,11 +18,16 @@ import * as SetSavedState from '../SetSavedState/SetSavedState.ts'
 import * as SetTextArea from '../SetTextArea/SetTextArea.ts'
 
 export const commandMap = {
+  // new
+  'WebView.create': Create2.create2,
+  handleClick: HandleClick.handleClick,
+  handleKeyDown: HandleKeyDown.handleKeyDown,
+  handleSubmit: HandleSubmit.handleSubmit,
+  handleCancel: HandleCancel.handleCancel,
+  handleInput: HandleInput.handleInput,
+
   // deprecated
   'Csv.parse': ParseCsv.parseCsv,
-
-  // new
-  'WebView.create': Create.create,
   'WebView.getCells': GetCells.getCells,
   'WebView.getCursor': GetCursor.getCursor,
   'WebView.getPosition': GetPosition.getPosition,
