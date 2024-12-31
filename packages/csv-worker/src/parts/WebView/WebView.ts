@@ -7,4 +7,5 @@ export interface WebView {
   readonly cells: readonly Row[]
   readonly value: string
   readonly header: Row
+  readonly port: any
 }
