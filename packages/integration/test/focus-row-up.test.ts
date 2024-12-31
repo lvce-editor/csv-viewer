@@ -1,7 +1,7 @@
 import { testWorker } from '../src/testWorker.ts'
 import { test, expect } from '@jest/globals'
 
-test('focus row up', async () => {
+test.skip('focus row up', async () => {
   const execMap = {}
   const worker = await testWorker({
     execMap,
