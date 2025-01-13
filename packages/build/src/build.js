@@ -31,13 +31,6 @@ fs.cpSync(join(csvWorker, 'src'), join(root, 'dist', 'csv-worker', 'src'), {
   recursive: true,
 })
 
-const assetDirPath = path.join(root, 'dist', 'src', 'parts', 'AssetDir', 'AssetDir.ts')
-await replace({
-  path: assetDirPath,
-  occurrence: '../../../../',
-  replacement: '../',
-})
-
 await replace({
   path: join(root, 'dist', 'extension.json'),
   occurrence: 'src/csvViewerMain.ts',
@@ -46,7 +39,7 @@ await replace({
 await replace({
   path: join(root, 'dist', 'extension.json'),
   occurrence: '../csv-worker/src/csvWorkerMain.ts',
-  replacement: '../csv-worker/dist/csvWorkerMain.js',
+  replacement: './csv-worker/dist/csvWorkerMain.js',
 })
 
 await bundleJs(
