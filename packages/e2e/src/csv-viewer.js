@@ -11,5 +11,10 @@ b,2
 `,
   )
 
+  // act
   await Main.openUri(`${tmpDir}/test.csv`)
+
+  // assert
+  const webView = Locator('.WebViewIframe')
+  await expect(webView).toBeVisible()
 }
