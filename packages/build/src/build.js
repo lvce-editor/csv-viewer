@@ -39,7 +39,7 @@ await replace({
 await replace({
   path: join(root, 'dist', 'extension.json'),
   occurrence: '../csv-worker/src/csvWorkerMain.ts',
-  replacement: '../csv-worker/dist/csvWorkerMain.js',
+  replacement: './csv-worker/dist/csvWorkerMain.js',
 })
 
 await bundleJs(
