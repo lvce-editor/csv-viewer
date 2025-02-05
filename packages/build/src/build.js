@@ -45,9 +45,10 @@ await replace({
 await bundleJs(
   join(root, 'dist', 'csv-worker', 'src', 'csvWorkerMain.ts'),
   join(root, 'dist', 'csv-worker', 'dist', 'csvWorkerMain.js'),
+  false,
 )
 
-await bundleJs(join(root, 'dist', 'src', 'csvViewerMain.ts'), join(root, 'dist', 'dist', 'csvViewerMain.js'))
+await bundleJs(join(root, 'dist', 'src', 'csvViewerMain.ts'), join(root, 'dist', 'dist', 'csvViewerMain.js'), false)
 
 await packageExtension({
   highestCompression: true,
