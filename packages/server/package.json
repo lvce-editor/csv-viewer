@@ -1,0 +1,17 @@
+{
+  "name": "dev-server",
+  "version": "0.0.0-dev",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "description": "",
+  "dependencies": {
+    "@lvce-editor/server": "^0.45.25"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.2"
+  }
+}
