@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "lerna bootstrap --ci",
     "test": "lerna run test",
-    "dev": "node ./packages/build/node_modules/@lvce-editor/server/bin/server.js --only-extension=packages/extension --test-path=packages/e2e",
+    "dev": "node packages/server/src/dev.js",
     "type-check": "tsc -b",
     "test:watch": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --watch",
     "e2e": "cd packages/e2e && npm run e2e",
