@@ -1,5 +1,5 @@
-import { testWorker } from '../src/testWorker.ts'
 import { test, expect } from '@jest/globals'
+import { testWorker } from '../src/testWorker.ts'
 
 test.skip('focus column right', async () => {
   const execMap = {}
@@ -11,7 +11,7 @@ test.skip('focus column right', async () => {
   await worker.execute('WebView.setCursor', id, 0, 0)
   await worker.execute('WebView.handleKeyDown', id, 'ArrowRight')
   expect(await worker.execute('WebView.getPosition', id)).toEqual({
-    rowIndex: 0,
     columnIndex: 1,
+    rowIndex: 0,
   })
 })

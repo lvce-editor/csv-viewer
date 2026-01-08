@@ -4,8 +4,8 @@ import * as GetTextAreaPosition from '../src/parts/GetTextAreaPosition/GetTextAr
 
 test('getTextAreaPosition', () => {
   const cursor: Cursor = {
-    rowIndex: 1,
     columnIndex: 1,
+    rowIndex: 1,
   }
   expect(GetTextAreaPosition.getTextAreaPosition(cursor)).toEqual({
     x: 41,

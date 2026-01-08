@@ -5,12 +5,12 @@ export const getVirtualDom = (id: number): any => {
   const webView = WebViewStates.get(id)
   const dom = GetCsvVirtualDom.getCsvVirtualDom(
     {
-      header: webView.header,
       content: webView.cells,
+      header: webView.header,
     },
     {
-      rowIndex: webView.rowIndex,
       columnIndex: webView.columnIndex,
+      rowIndex: webView.rowIndex,
       textArea: webView.textArea,
     },
   )

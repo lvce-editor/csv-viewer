@@ -1,6 +1,6 @@
-import * as GetTextAreaPosition from '../GetTextAreaPosition/GetTextAreaPosition.ts'
 import type { ParsedCsv } from '../ParsedCsv/ParsedCsv.ts'
-import { Row } from '../WebView/WebView.ts'
+import type { Row } from '../WebView/WebView.ts'
+import * as GetTextAreaPosition from '../GetTextAreaPosition/GetTextAreaPosition.ts'
 
 const getFocused = (cursor: any, rowIndex: number, columnIndex: number) => {
   if (!cursor) {
@@ -13,35 +13,34 @@ const getFocused = (cursor: any, rowIndex: number, columnIndex: number) => {
 }
 
 const getCsvTableHeadDom = (rows: readonly string[], cursor: any) => {
-  const children: any[] = []
-  children.push({
-    type: 'th',
-    className: 'TableHeading TableCellInfo',
+  const children: any[] = [ {
     children: [],
-  })
+    className: 'TableHeading TableCellInfo',
+    type: 'th',
+  }]
   for (const row of rows) {
     children.push({
-      type: 'th',
-      className: 'TableHeading TableCell',
       children: [
         {
+          children: [],
           type: 'text',
           value: row,
-          children: [],
         },
       ],
+      className: 'TableHeading TableCell',
+      type: 'th',
     })
   }
   return {
-    type: 'thead',
-    className: 'TableHead',
     children: [
       {
-        type: 'tr',
-        className: 'TableRow',
         children,
+        className: 'TableRow',
+        type: 'tr',
       },
     ],
+    className: 'TableHead',
+    type: 'thead',
   }
 }
 
@@ -53,44 +52,44 @@ const getCsvTableBodyDom = (rows: readonly Row[], cursor: any) => {
     const isFocused = getFocused(cursor, i, 0)
     const extraClass = isFocused ? 'TableCellFocused' : ''
     children.push({
-      type: 'td',
-      className: `TableCell TableCellInfo ${extraClass}`,
-      'data-row': i,
-      'data-column': 0,
       children: [
         {
           type: 'text',
           value: `${i + 1}`,
         },
       ],
+      className: `TableCell TableCellInfo ${extraClass}`,
+      'data-column': 0,
+      'data-row': i,
+      type: 'td',
     })
     for (let j = 0; j < row.length; j++) {
       const cell = row[j]
       const focused = getFocused(cursor, i, j + 1)
       const extraClass = focused ? 'TableCellFocused' : ''
       children.push({
-        type: 'td',
-        className: `TableCell ${extraClass}`,
-        'data-row': i,
-        'data-column': j + 1,
         children: [
           {
             type: 'text',
             value: cell,
           },
         ],
+        className: `TableCell ${extraClass}`,
+        'data-column': j + 1,
+        'data-row': i,
+        type: 'td',
       })
     }
     dom.push({
-      type: 'tr',
-      className: 'TableRow',
       children,
+      className: 'TableRow',
+      type: 'tr',
     })
   }
   const tableBody = {
-    type: 'tbody',
-    className: 'TableBody',
     children: dom,
+    className: 'TableBody',
+    type: 'tbody',
   }
   return tableBody
 }
@@ -98,29 +97,29 @@ const getCsvTableBodyDom = (rows: readonly Row[], cursor: any) => {
 export const getCsvVirtualDom = (parsed: ParsedCsv, cursor: any): any => {
   const children: any[] = [
     {
-      type: 'table',
-      className: 'Table',
       children: [getCsvTableHeadDom(parsed.header, cursor), getCsvTableBodyDom(parsed.content, cursor)],
+      className: 'Table',
+      type: 'table',
     },
   ]
 
   const dom: any = {
-    type: 'div',
-    className: 'Content',
     children,
+    className: 'Content',
+    type: 'div',
   }
   if (cursor && cursor.textArea) {
     const { x, y } = GetTextAreaPosition.getTextAreaPosition(cursor)
     children.push({
-      type: 'textarea',
+      children: [],
       className: 'TextArea',
+      name: 'TextArea',
       style: {
         left: `${x}px`,
         top: `${y}px`,
       },
-      name: 'TextArea',
+      type: 'textarea',
       value: parsed?.content?.[cursor.rowIndex]?.[cursor.columnIndex - 1] || '',
-      children: [],
     })
   }
   return dom

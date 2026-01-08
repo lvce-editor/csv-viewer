@@ -1,5 +1,5 @@
-import { testWorker } from '../src/testWorker.ts'
 import { test, expect } from '@jest/globals'
+import { testWorker } from '../src/testWorker.ts'
 
 test.skip('edit cell', async () => {
   const execMap = {}
