@@ -4,15 +4,15 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "postinstall": "lerna bootstrap --ci",
-    "test": "lerna run test",
+    "build": "node packages/build/src/build-static.js",
     "dev": "node packages/server/src/dev.js",
-    "type-check": "tsc -b",
-    "test:watch": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --watch",
     "e2e": "cd packages/e2e && npm run e2e",
     "e2e:headless": "cd packages/e2e && npm run e2e:headless",
-    "build": "node packages/build/src/build-static.js",
-    "lint": "eslint . && prettier --check ."
+    "postinstall": "lerna bootstrap --ci",
+    "lint": "eslint . && prettier --check .",
+    "test": "lerna run test",
+    "test:watch": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --watch",
+    "type-check": "tsc -b"
   },
   "keywords": [],
   "author": "",
