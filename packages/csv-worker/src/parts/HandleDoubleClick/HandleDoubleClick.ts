@@ -4,11 +4,11 @@ import * as SetTextArea from '../SetTextArea/SetTextArea.ts'
 import * as WebViewStates from '../WebViewStates/WebViewStates.ts'
 
 export const handleDoubleClick = async (id: number, row: string, column: string) => {
-  const parsedRow = parseInt(row)
-  const parsedColumn = parseInt(column)
+  const parsedRow = Number.parseInt(row)
+  const parsedColumn = Number.parseInt(column)
   const cursor = {
-    rowIndex: parsedRow,
     columnIndex: parsedColumn,
+    rowIndex: parsedRow,
     textArea: true,
   }
   SetCursor.setCursor(id, parsedRow, parsedColumn)

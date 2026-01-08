@@ -20,17 +20,17 @@ import * as SetTextArea from '../SetTextArea/SetTextArea.ts'
 import * as WrapCommand from '../WrapCommand/WrapCommand.ts'
 
 export const commandMap = {
-  // new
-  'WebView.create': Create2.create2,
-  handleClick: WrapCommand.wrapCommand(HandleClick.handleClick),
-  handleKeyDown: WrapCommand.wrapCommand(HandleKeyDown.handleKeyDown),
-  handleSubmit: WrapCommand.wrapCommand(HandleSubmit.handleSubmit),
-  handleCancel: WrapCommand.wrapCommand(HandleCancel.handleCancel),
-  handleInput: WrapCommand.wrapCommand(HandleInput.handleInput),
-  handleDoubleClick: HandleDoubleClick.handleDoubleClick,
-
   // deprecated
   'Csv.parse': ParseCsv.parseCsv,
+  handleCancel: WrapCommand.wrapCommand(HandleCancel.handleCancel),
+  handleClick: WrapCommand.wrapCommand(HandleClick.handleClick),
+  handleDoubleClick: HandleDoubleClick.handleDoubleClick,
+  handleInput: WrapCommand.wrapCommand(HandleInput.handleInput),
+  handleKeyDown: WrapCommand.wrapCommand(HandleKeyDown.handleKeyDown),
+  handleSubmit: WrapCommand.wrapCommand(HandleSubmit.handleSubmit),
+
+  // new
+  'WebView.create': Create2.create2,
   'WebView.getCells': GetCells.getCells,
   'WebView.getCursor': GetCursor.getCursor,
   'WebView.getPosition': GetPosition.getPosition,

@@ -4,8 +4,8 @@ export const setCursor = (id: number, rowIndex: number, columnIndex: number) => 
   const webView = WebViewStates.get(id)
   const newWebView = {
     ...webView,
-    rowIndex,
     columnIndex,
+    rowIndex,
   }
   WebViewStates.set(id, newWebView)
 }

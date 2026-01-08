@@ -1,22 +1,36 @@
 import * as WebViewStates from '../WebViewStates/WebViewStates.ts'
 
 const getNewWebView = (webView: any, key: string): any => {
-  let rowIndex = webView.rowIndex
-  let columnIndex = webView.columnIndex
+  let {rowIndex} = webView
+  let {columnIndex} = webView
   if (key === 'Enter') {
     return {
       ...webView,
       textArea: false,
     }
   }
-  if (key === 'ArrowLeft') {
-    columnIndex--
-  } else if (key === 'ArrowRight') {
-    columnIndex++
-  } else if (key === 'ArrowDown') {
+  switch (key) {
+  case 'ArrowDown': {
     rowIndex++
-  } else if (key === 'ArrowUp') {
+  
+  break;
+  }
+  case 'ArrowLeft': {
+    columnIndex--
+  
+  break;
+  }
+  case 'ArrowRight': {
+    columnIndex++
+  
+  break;
+  }
+  case 'ArrowUp': {
     rowIndex--
+  
+  break;
+  }
+  // No default
   }
   if (rowIndex <= 0) {
     rowIndex = 0
@@ -26,8 +40,8 @@ const getNewWebView = (webView: any, key: string): any => {
   }
   return {
     ...webView,
-    rowIndex,
     columnIndex,
+    rowIndex,
   }
 }
 
