@@ -7,7 +7,7 @@ import * as SetCells from '../SetCells/SetCells.ts'
 import * as SetHeader from '../SetHeader/SetHeader.ts'
 import * as SetSavedState from '../SetSavedState/SetSavedState.ts'
 
-export const create2 = async ({ port, savedState, webViewId, uri }) => {
+export const create2 = async ({ port, savedState, uri, webViewId }) => {
   const content = await Rpc.invoke('WebView.readFile', uri)
   const parsed = ParseCsv.parseCsv(content)
 

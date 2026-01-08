@@ -1,4 +1,4 @@
-import { WebView } from '../WebView/WebView.ts'
+import type { WebView } from '../WebView/WebView.ts'
 import * as WebViewStates from '../WebViewStates/WebViewStates.ts'
 
 const getSavedRowIndex = (savedState: any): number => {
@@ -29,8 +29,8 @@ export const setSavedState = (id: number, savedState: any): void => {
   const value = getSavedValue(savedState)
   const newState: WebView = {
     ...webView,
-    rowIndex,
     columnIndex,
+    rowIndex,
     value,
   }
   WebViewStates.set(id, newState)
