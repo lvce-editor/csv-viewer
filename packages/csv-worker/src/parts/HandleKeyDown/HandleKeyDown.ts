@@ -1,8 +1,8 @@
 import * as WebViewStates from '../WebViewStates/WebViewStates.ts'
 
 const getNewWebView = (webView: any, key: string): any => {
-  let {rowIndex} = webView
-  let {columnIndex} = webView
+  let { rowIndex } = webView
+  let { columnIndex } = webView
   if (key === 'Enter') {
     return {
       ...webView,
@@ -10,27 +10,27 @@ const getNewWebView = (webView: any, key: string): any => {
     }
   }
   switch (key) {
-  case 'ArrowDown': {
-    rowIndex++
-  
-  break;
-  }
-  case 'ArrowLeft': {
-    columnIndex--
-  
-  break;
-  }
-  case 'ArrowRight': {
-    columnIndex++
-  
-  break;
-  }
-  case 'ArrowUp': {
-    rowIndex--
-  
-  break;
-  }
-  // No default
+    case 'ArrowDown': {
+      rowIndex++
+
+      break
+    }
+    case 'ArrowLeft': {
+      columnIndex--
+
+      break
+    }
+    case 'ArrowRight': {
+      columnIndex++
+
+      break
+    }
+    case 'ArrowUp': {
+      rowIndex--
+
+      break
+    }
+    // No default
   }
   if (rowIndex <= 0) {
     rowIndex = 0

@@ -1,15 +1,17 @@
 {
   "name": "csv-worker",
   "version": "0.0.0-dev",
-  "description": "",
+  "description": "CSV viewer worker",
   "main": "src/csvWorkerMain.ts",
   "type": "module",
   "scripts": {
     "test": "node --unhandled-rejections=warn --experimental-vm-modules ../../node_modules/jest/bin/jest.js --detectOpenHandles --forceExit",
     "test:watch": "node --unhandled-rejections=warn --experimental-vm-modules ../../node_modules/jest/bin/jest.js --watch"
   },
-  "keywords": [],
-  "author": "",
+  "author": {
+    "name": "Le Vivilet",
+    "email": "levivilet@pm.me"
+  },
   "license": "MIT",
   "jest": {
     "injectGlobals": false,

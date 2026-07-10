@@ -13,11 +13,13 @@ const getFocused = (cursor: any, rowIndex: number, columnIndex: number) => {
 }
 
 const getCsvTableHeadDom = (rows: readonly string[], cursor: any) => {
-  const children: any[] = [ {
-    children: [],
-    className: 'TableHeading TableCellInfo',
-    type: 'th',
-  }]
+  const children: any[] = [
+    {
+      children: [],
+      className: 'TableHeading TableCellInfo',
+      type: 'th',
+    },
+  ]
   for (const row of rows) {
     children.push({
       children: [
@@ -55,7 +57,7 @@ const getCsvTableBodyDom = (rows: readonly Row[], cursor: any) => {
       children: [
         {
           type: 'text',
-          value: `${i + 1}`,
+          value: String(i + 1),
         },
       ],
       className: `TableCell TableCellInfo ${extraClass}`,
