@@ -1,6 +1,7 @@
 import type { ParsedCsv } from '../ParsedCsv/ParsedCsv.ts'
 import type { Row } from '../WebView/WebView.ts'
 import * as GetTextAreaPosition from '../GetTextAreaPosition/GetTextAreaPosition.ts'
+import * as MergeClassNames from '../MergeClassNames/MergeClassNames.ts'
 
 const getFocused = (cursor: any, rowIndex: number, columnIndex: number) => {
   if (!cursor) {
@@ -16,7 +17,7 @@ const getCsvTableHeadDom = (rows: readonly string[], cursor: any) => {
   const children: any[] = [
     {
       children: [],
-      className: 'TableHeading TableCellInfo',
+      className: MergeClassNames.mergeClassNames('TableHeading', 'TableCellInfo'),
       type: 'th',
     },
   ]
@@ -29,7 +30,7 @@ const getCsvTableHeadDom = (rows: readonly string[], cursor: any) => {
           value: row,
         },
       ],
-      className: 'TableHeading TableCell',
+      className: MergeClassNames.mergeClassNames('TableHeading', 'TableCell'),
       type: 'th',
     })
   }
@@ -60,7 +61,7 @@ const getCsvTableBodyDom = (rows: readonly Row[], cursor: any) => {
           value: String(i + 1),
         },
       ],
-      className: `TableCell TableCellInfo ${extraClass}`,
+      className: MergeClassNames.mergeClassNames('TableCell', 'TableCellInfo', extraClass),
       'data-column': 0,
       'data-row': i,
       type: 'td',
@@ -76,7 +77,7 @@ const getCsvTableBodyDom = (rows: readonly Row[], cursor: any) => {
             value: cell,
           },
         ],
-        className: `TableCell ${extraClass}`,
+        className: MergeClassNames.mergeClassNames('TableCell', extraClass),
         'data-column': j + 1,
         'data-row': i,
         type: 'td',
