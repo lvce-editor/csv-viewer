@@ -3,14 +3,16 @@
   "version": "0.0.0-dev",
   "description": "CSV viewer extension",
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "build": "node packages/build/src/build-static.js",
     "dev": "node packages/server/src/dev.js",
-    "e2e": "cd packages/e2e && npm run e2e",
-    "e2e:headless": "cd packages/e2e && npm run e2e:headless",
-    "postinstall": "lerna bootstrap --ci",
+    "e2e": "npm run e2e --workspace=e2e",
+    "e2e:headless": "npm run e2e:headless --workspace=e2e",
     "lint": "eslint . && prettier --check .",
-    "test": "lerna run test",
+    "test": "npm test --workspaces --if-present",
     "test:watch": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --watch",
     "type-check": "tsc -b"
   },
@@ -20,12 +22,10 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@lerna/legacy-package-management": "^8.2.2",
     "@lvce-editor/eslint-config": "^17.0.3",
     "@types/node": "^22.7.7",
     "eslint": "^10.7.0",
     "jest": "^29.7.0",
-    "lerna": "^8.2.2",
     "prettier": "^3.5.3",
     "ts-jest": "^29.4.11",
     "typescript": "^6.0.0"
