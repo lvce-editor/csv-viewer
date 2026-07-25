@@ -1,6 +1,7 @@
 import { packageExtension, bundleJs, replace } from '@lvce-editor/package-extension'
 import fs, { readFileSync } from 'node:fs'
 import path, { join } from 'node:path'
+import { bundleExtensionMain } from './bundleExtensionMain.js'
 import { root } from './root.js'
 
 const extension = path.join(root, 'packages', 'extension')
@@ -48,7 +49,7 @@ await bundleJs(
   false,
 )
 
-await bundleJs(join(root, 'dist', 'src', 'csvViewerMain.ts'), join(root, 'dist', 'dist', 'csvViewerMain.js'), false)
+await bundleExtensionMain(join(root, 'dist', 'src', 'csvViewerMain.ts'), join(root, 'dist', 'dist', 'csvViewerMain.js'))
 
 await packageExtension({
   highestCompression: true,
