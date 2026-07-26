@@ -3,6 +3,7 @@
   "name": "CSV Viewer",
   "description": "CSV Viewer",
   "browser": "src/csvViewerMain.ts",
+  "contentSecurityPolicy": ["default-src 'none'", "script-src 'self'"],
   "isolated": true,
   "activation": ["onWebView:builtin.csv-viewer"],
   "repository": "https://github.com/lvce-editor/csv-viewer",
