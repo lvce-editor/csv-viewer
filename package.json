@@ -22,7 +22,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@lvce-editor/eslint-config": "^17.6.0",
+    "@lvce-editor/eslint-config": "^18.0.0",
     "@types/node": "^22.7.7",
     "eslint": "^10.8.0",
     "jest": "^29.7.0",
