@@ -2,41 +2,22 @@
   "id": "builtin.csv-viewer",
   "name": "CSV Viewer",
   "description": "CSV Viewer",
-  "browser": "src/csvViewerMain.ts",
+  "browser": "dist/csvViewerMain.js",
   "contentSecurityPolicy": ["default-src 'none'", "script-src 'self'"],
   "isolated": true,
-  "activation": ["onWebView:builtin.csv-viewer"],
+  "workerName": "CSV Viewer Worker",
+  "activation": ["onView:builtin.csv-viewer"],
   "repository": "https://github.com/lvce-editor/csv-viewer",
   "languages": [],
-  "rpc": [
-    {
-      "id": "builtin.csv-viewer.csv-worker",
-      "type": "web-worker",
-      "name": "Csv Worker",
-      "url": "../csv-worker/src/csvWorkerMain.ts",
-      "contentSecurityPolicy": ["default-src 'none'"]
-    }
-  ],
-  "webViews": [
+  "views": [
     {
       "id": "builtin.csv-viewer",
-      "rpc": "builtin.csv-viewer.csv-worker",
+      "title": "CSV Viewer",
+      "kind": "virtualDom",
+      "type": "preview",
+      "css": "media/index.css",
       "selector": [".csv"],
-      "contentSecurityPolicy": ["default-src 'none'", "script-src 'self'", "style-src 'self'"],
-      "elements": [
-        {
-          "type": "title",
-          "value": "CSV Viewer"
-        },
-        {
-          "type": "script",
-          "path": "media/index.js"
-        },
-        {
-          "type": "css",
-          "path": "media/index.css"
-        }
-      ]
+      "showSideBarHeader": false
     }
   ]
 }

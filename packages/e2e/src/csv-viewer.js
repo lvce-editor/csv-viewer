@@ -19,6 +19,6 @@ b,2
   await reopenPromise
 
   // assert
-  const webView = Locator('.WebViewIframe')
-  await expect(webView).toBeVisible()
+  const table = Locator('.Table')
+  await expect(table).toBeVisible()
 }

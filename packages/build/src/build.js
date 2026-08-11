@@ -1,12 +1,10 @@
-import { packageExtension, bundleJs, replace } from '@lvce-editor/package-extension'
+import { packageExtension } from '@lvce-editor/package-extension'
 import fs, { readFileSync } from 'node:fs'
 import path, { join } from 'node:path'
 import { bundleExtensionMain } from './bundleExtensionMain.js'
 import { root } from './root.js'
 
 const extension = path.join(root, 'packages', 'extension')
-const csvWorker = path.join(root, 'packages', 'csv-worker')
-
 fs.rmSync(join(root, 'dist'), { recursive: true, force: true })
 
 fs.mkdirSync(path.join(root, 'dist'))
@@ -21,35 +19,11 @@ fs.writeFileSync(join(root, 'dist', 'package.json'), JSON.stringify(packageJson,
 fs.copyFileSync(join(root, 'README.md'), join(root, 'dist', 'README.md'))
 fs.copyFileSync(join(root, 'LICENSE'), join(root, 'dist', 'LICENSE'))
 fs.copyFileSync(join(extension, 'extension.json'), join(root, 'dist', 'extension.json'))
-fs.cpSync(join(extension, 'src'), join(root, 'dist', 'src'), {
-  recursive: true,
-})
 fs.cpSync(join(extension, 'media'), join(root, 'dist', 'media'), {
   recursive: true,
 })
 
-fs.cpSync(join(csvWorker, 'src'), join(root, 'dist', 'csv-worker', 'src'), {
-  recursive: true,
-})
-
-await replace({
-  path: join(root, 'dist', 'extension.json'),
-  occurrence: 'src/csvViewerMain.ts',
-  replacement: 'dist/csvViewerMain.js',
-})
-await replace({
-  path: join(root, 'dist', 'extension.json'),
-  occurrence: '../csv-worker/src/csvWorkerMain.ts',
-  replacement: './csv-worker/dist/csvWorkerMain.js',
-})
-
-await bundleJs(
-  join(root, 'dist', 'csv-worker', 'src', 'csvWorkerMain.ts'),
-  join(root, 'dist', 'csv-worker', 'dist', 'csvWorkerMain.js'),
-  false,
-)
-
-await bundleExtensionMain(join(root, 'dist', 'src', 'csvViewerMain.ts'), join(root, 'dist', 'dist', 'csvViewerMain.js'))
+await bundleExtensionMain(join(extension, 'src', 'csvViewerMain.ts'), join(root, 'dist', 'dist', 'csvViewerMain.js'))
 
 await packageExtension({
   highestCompression: true,

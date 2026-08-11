@@ -22,17 +22,13 @@ body {
   margin: 0;
 }
 
-.App {
+.Content {
   width: 100%;
   height: 100%;
   contain: strict;
   font-family: var(--FontFamily);
   background: var(--MainBackground);
   color: var(--Foreground);
-}
-
-.Content {
-  contain: content;
 }
 
 .Table {
@@ -65,12 +61,6 @@ body {
 .TableCellFocused {
   background: var(--ActiveSelectionBackground);
   color: var(--ActiveSelectionForeground);
-}
-
-.Content {
-  contain: strict;
-  width: 100%;
-  height: 100%;
 }
 
 .TextArea {
