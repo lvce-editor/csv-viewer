@@ -13,17 +13,17 @@ export default defineConfig([
     },
   },
   {
-    files: ['packages/integration/**/*.ts'],
+    files: ['packages/extension/src/parts/{CreateInstance,Main}/**/*.ts'],
     rules: {
-      'jest/no-disabled-tests': 'off',
-      'unicorn/no-global-object-property-assignment': 'off',
+      'virtual-dom/prefer-state-destructuring': 'off',
     },
   },
   {
-    files: ['packages/csv-worker/src/parts/GetCsvVirtualDom/GetCsvVirtualDom.ts'],
+    files: ['packages/extension/src/parts/RenderCsv/RenderCsv.ts'],
     rules: {
       'virtual-dom/no-inline-style': 'off',
       'virtual-dom/no-object-attribute-values': 'off',
+      'virtual-dom/valid-child-count': 'off',
     },
   },
 ])
