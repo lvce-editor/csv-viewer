@@ -8,9 +8,10 @@
   ],
   "scripts": {
     "build": "node packages/build/src/build-static.js",
+    "build:extension": "node packages/build/src/build.js",
     "dev": "node packages/server/src/dev.js",
-    "e2e": "npm run e2e --workspace=e2e",
-    "e2e:headless": "npm run e2e:headless --workspace=e2e",
+    "e2e": "npm run build:extension && npm run e2e --workspace=e2e",
+    "e2e:headless": "npm run build:extension && npm run e2e:headless --workspace=e2e",
     "lint": "eslint . && prettier --check .",
     "test": "npm test --workspaces --if-present",
     "test:watch": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --watch",
