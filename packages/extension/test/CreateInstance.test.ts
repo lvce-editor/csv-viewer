@@ -1,15 +1,15 @@
 import type { ViewContext } from '@lvce-editor/api'
 import { expect, jest, test } from '@jest/globals'
-import { VirtualDomElements } from '@lvce-editor/virtual-dom-worker'
+import { validate, VirtualDomElements } from '@lvce-editor/virtual-dom-worker'
 import { createInstanceWithReadFile } from '../src/parts/CreateInstance/CreateInstance.ts'
 
-const createContext = (state?: unknown): ViewContext & { readonly uri: string } => {
+const createContext = (state?: unknown, uri = '/test.csv'): ViewContext & { readonly uri: string } => {
   return {
     requestRerender: jest.fn(async () => {}),
     showContextMenu: jest.fn(async () => {}),
     state,
     uid: 1,
-    uri: '/test.csv',
+    uri,
     viewId: 'builtin.csv-viewer',
   }
 }
@@ -18,9 +18,16 @@ test('reads the file and renders its table', async () => {
   const readFile = jest.fn(async () => 'key,value\na,1')
   const instance = await createInstanceWithReadFile(createContext(), readFile)
   const dom = instance.render()
-  expect(readFile).toHaveBeenCalledWith('/test.csv')
+  expect(readFile).toHaveBeenCalledWith('file:///test.csv')
+  expect(validate(dom)).toBe(true)
   expect(dom).toContainEqual(expect.objectContaining({ className: 'Table', type: VirtualDomElements.Table }))
   expect(dom).toContainEqual(expect.objectContaining({ name: 'cell:0:1' }))
+})
+
+test('preserves file uris when reading the file', async () => {
+  const readFile = jest.fn(async () => 'key,value\na,1')
+  await createInstanceWithReadFile(createContext(undefined, 'file:///test.csv'), readFile)
+  expect(readFile).toHaveBeenCalledWith('file:///test.csv')
 })
 
 test('edits a cell directly in the isolated view instance', async () => {
