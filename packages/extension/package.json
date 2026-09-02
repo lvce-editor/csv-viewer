@@ -14,8 +14,8 @@
   "type": "module",
   "license": "MIT",
   "devDependencies": {
-    "@lvce-editor/api": "^9.16.0",
-    "@lvce-editor/virtual-dom-worker": "^11.12.2"
+    "@lvce-editor/api": "^9.28.3",
+    "@lvce-editor/virtual-dom-worker": "^11.17.0"
   },
   "jest": {
     "injectGlobals": false,

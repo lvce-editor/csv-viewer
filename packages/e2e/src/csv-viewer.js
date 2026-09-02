@@ -1,6 +1,6 @@
 export const name = 'csv-viewer'
 
-export const test = async ({ Command, FileSystem, Main, Locator, QuickPick, expect }) => {
+export const test = async ({ FileSystem, Main, Locator, expect }) => {
   // arrange
   const tmpDir = await FileSystem.getTmpDir()
   await FileSystem.writeFile(
@@ -13,12 +13,11 @@ b,2
 
   // act
   await Main.openUri(`${tmpDir}/test.csv`)
-  const reopenPromise = Command.execute('Main.reopenEditorWith')
-  await expect(Locator('.QuickPick')).toBeVisible()
-  await QuickPick.selectItem('CSV Viewer')
-  await reopenPromise
 
   // assert
   const table = Locator('.Table')
   await expect(table).toBeVisible()
+  await expect(Locator('.WebViewIframe')).toHaveCount(0)
+  await expect(Locator('.TableHeading').nth(1)).toHaveText('key')
+  await expect(Locator('.TableBody .TableRow').nth(0).locator('.TableCell').nth(1)).toHaveText('a')
 }

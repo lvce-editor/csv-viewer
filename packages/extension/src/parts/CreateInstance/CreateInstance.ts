@@ -3,6 +3,7 @@ import { readFile, type ViewContext, type ViewEvent, type VirtualDomViewInstance
 import type { CsvViewState } from '../CsvViewState/CsvViewState.ts'
 import { parseCsv } from '../ParseCsv/ParseCsv.ts'
 import { getCellName, renderCsv } from '../RenderCsv/RenderCsv.ts'
+import { toFileUri } from '../ToFileUri/ToFileUri.ts'
 
 export interface CsvViewInstance extends VirtualDomViewInstance {
   readonly getContext: () => Readonly<Record<string, boolean>>
@@ -56,7 +57,7 @@ const getCellValue = (state: Readonly<CsvViewState>, rowIndex: number, columnInd
 
 export const createInstanceWithReadFile = async (context: ViewContext | undefined, read: ReadFile): Promise<CsvViewInstance> => {
   const uri = getUri(context)
-  const parsed = parseCsv(uri ? await read(uri) : '')
+  const parsed = parseCsv(uri ? await read(toFileUri(uri)) : '')
   const savedState = context?.state as SavedState | undefined
   let state: CsvViewState = {
     cells: parsed.content,
