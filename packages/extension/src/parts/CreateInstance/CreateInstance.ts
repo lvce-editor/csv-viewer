@@ -6,11 +6,13 @@ import { getCellName, renderCsv } from '../RenderCsv/RenderCsv.ts'
 import { toFileUri } from '../ToFileUri/ToFileUri.ts'
 
 export interface CsvViewInstance extends VirtualDomViewInstance {
+  readonly getComponentState: () => CsvViewState
   readonly getContext: () => Readonly<Record<string, boolean>>
   readonly handleDoubleClick: (name: unknown) => void
   readonly handleKeyDown: (name: unknown, key: unknown) => void
   readonly renderFocus: () => string
   readonly saveState: () => unknown
+  readonly setComponentState: (state: CsvViewState) => void
 }
 
 interface SavedState {
@@ -123,6 +125,9 @@ export const createInstanceWithReadFile = async (context: ViewContext | undefine
   }
 
   return {
+    getComponentState(): CsvViewState {
+      return state
+    },
     getContext(): Readonly<Record<string, boolean>> {
       return { csvViewerFocusRequest: state.focusRequest }
     },
@@ -198,6 +203,9 @@ export const createInstanceWithReadFile = async (context: ViewContext | undefine
         uri,
         value: state.value,
       }
+    },
+    setComponentState(newState: CsvViewState): void {
+      state = newState
     },
   }
 }
