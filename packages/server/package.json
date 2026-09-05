@@ -9,7 +9,7 @@
   "type": "module",
   "description": "",
   "dependencies": {
-    "@lvce-editor/server": "^0.111.22"
+    "@lvce-editor/server": "^0.113.11"
   },
   "devDependencies": {
     "@types/node": "^22.13.2"

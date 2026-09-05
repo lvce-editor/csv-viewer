@@ -69,3 +69,13 @@ test('restores cursor state while rereading file content', async () => {
     value: 'draft',
   })
 })
+
+test('component state edits affect rendering and subsequent cell selection in one instance', async () => {
+  const first = await createInstanceWithReadFile(undefined, async () => '')
+  const second = await createInstanceWithReadFile(undefined, async () => '')
+  first.setComponentState({ ...first.getComponentState(), cells: [['edited']], header: ['name'] })
+  expect(JSON.stringify(first.render())).toContain('edited')
+  first.handleDoubleClick('cell:0:1')
+  expect(first.getComponentState().value).toBe('edited')
+  expect(second.getComponentState().cells).not.toEqual([['edited']])
+})
