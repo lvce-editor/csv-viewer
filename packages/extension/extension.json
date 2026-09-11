@@ -1,6 +1,7 @@
 {
   "id": "builtin.csv-viewer",
   "name": "CSV Viewer",
+  "icon": "media/csv.svg",
   "description": "CSV Viewer",
   "browser": "dist/csvViewerMain.js",
   "contentSecurityPolicy": ["default-src 'none'", "script-src 'self'"],
