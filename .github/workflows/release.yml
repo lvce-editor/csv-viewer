@@ -41,7 +41,7 @@ jobs:
           node-version-file: '.nvmrc'
       - name: Compute node modules cache key
         id: nodeModulesCacheKey
-        run: echo "value=$(node packages/build/src/computeNodeModulesCacheKey.js)" >> $GITHUB_OUTPUT
+        run: echo "value=$(node packages/build/src/computeNodeModulesCacheKey.ts)" >> $GITHUB_OUTPUT
         shell: bash
       - uses: actions/cache@v6
         id: npm-cache
@@ -59,7 +59,7 @@ jobs:
         if: steps.npm-cache.outputs.cache-hit != 'true'
         env:
           PLAYWRIGHT_BROWSERS_PATH: 0
-      - run: node packages/build/src/build.js
+      - run: node packages/build/src/build.ts
       - name: Build archive
         shell: bash
         run: |

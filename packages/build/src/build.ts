@@ -1,7 +1,7 @@
 import { bundleJs, packageExtension } from '@lvce-editor/package-extension'
 import fs, { readFileSync } from 'node:fs'
 import path, { join } from 'node:path'
-import { root } from './root.js'
+import { root } from './root.ts'
 
 const extension = path.join(root, 'packages', 'extension')
 fs.rmSync(join(root, 'dist'), { recursive: true, force: true })
