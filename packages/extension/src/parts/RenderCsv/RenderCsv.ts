@@ -58,6 +58,7 @@ const renderCell = (
     {
       childCount: 1,
       className: mergeClassNames('TableCell', info ? 'TableCellInfo' : '', focusedClassName),
+      id: getCellName(rowIndex, columnIndex),
       name: getCellName(rowIndex, columnIndex),
       onClick: handleClick,
       ...(columnIndex > 0 && { onDblClick: handleDoubleClick }),

@@ -37,7 +37,7 @@ test('edits a cell directly in the isolated view instance', async () => {
   instance.handleEvent?.({ name: 'cellEditor', type: 'input', value: 'b' })
   instance.handleKeyDown('cellEditor', 'Enter')
   expect(instance.render()).toContainEqual(expect.objectContaining({ text: 'b' }))
-  expect(instance.renderFocus()).toBe('[name="cell:0:1"]')
+  expect(instance.renderFocus()).toBe('[id="cell:0:1"]')
 })
 
 test('cancels editing and preserves the old value', async () => {
@@ -52,9 +52,9 @@ test('cancels editing and preserves the old value', async () => {
 test('moves focus with arrow keys', async () => {
   const instance = await createInstanceWithReadFile(createContext(), async () => 'a,b\n1,2\n3,4')
   instance.handleKeyDown('cell:0:1', 'ArrowRight')
-  expect(instance.renderFocus()).toBe('[name="cell:0:2"]')
+  expect(instance.renderFocus()).toBe('[id="cell:0:2"]')
   instance.handleKeyDown('cell:0:2', 'ArrowDown')
-  expect(instance.renderFocus()).toBe('[name="cell:1:2"]')
+  expect(instance.renderFocus()).toBe('[id="cell:1:2"]')
 })
 
 test('restores cursor state while rereading file content', async () => {
