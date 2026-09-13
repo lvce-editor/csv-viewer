@@ -2,7 +2,7 @@ import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
 import { readFile, type ViewContext, type ViewEvent, type VirtualDomViewInstance } from '@lvce-editor/api'
 import type { CsvViewState } from '../CsvViewState/CsvViewState.ts'
 import { parseCsv } from '../ParseCsv/ParseCsv.ts'
-import { renderCsv } from '../RenderCsv/RenderCsv.ts'
+import { getCellName, renderCsv } from '../RenderCsv/RenderCsv.ts'
 import { toFileUri } from '../ToFileUri/ToFileUri.ts'
 
 export interface CsvViewInstance extends VirtualDomViewInstance {
@@ -88,7 +88,7 @@ export const createInstanceWithReadFile = async (context: ViewContext | undefine
 
   const focusCell = (rowIndex: number, columnIndex: number): void => {
     updateState({ columnIndex, rowIndex, textArea: false })
-    requestFocus('.TableCellFocused')
+    requestFocus(`[id="${getCellName(rowIndex, columnIndex)}"]`)
   }
 
   const handleCellClick = (name: unknown): void => {
@@ -106,7 +106,7 @@ export const createInstanceWithReadFile = async (context: ViewContext | undefine
 
   const cancelEdit = (): void => {
     updateState({ textArea: false })
-    requestFocus('.TableCellFocused')
+    requestFocus(`[id="${getCellName(state.rowIndex, state.columnIndex)}"]`)
   }
 
   const submitEdit = (): void => {
@@ -121,7 +121,7 @@ export const createInstanceWithReadFile = async (context: ViewContext | undefine
     const newCells = [...cells]
     newCells[rowIndex] = newRow
     updateState({ cells: newCells, textArea: false })
-    requestFocus('.TableCellFocused')
+    requestFocus(`[id="${getCellName(rowIndex, columnIndex)}"]`)
   }
 
   return {
