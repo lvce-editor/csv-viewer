@@ -7,8 +7,8 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "node packages/build/src/build-static.js",
-    "build:extension": "node packages/build/src/build.js",
+    "build": "node packages/build/src/build-static.ts",
+    "build:extension": "node packages/build/src/build.ts",
     "dev": "node packages/server/src/dev.js",
     "e2e": "npm run build:extension && npm run e2e --workspace=e2e",
     "e2e:headless": "npm run build:extension && npm run e2e:headless --workspace=e2e",
