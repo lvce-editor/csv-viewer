@@ -6,7 +6,7 @@ export const test: Test = async ({ FileSystem, Main, Locator, KeyBoard, expect }
   const tmpDir = await FileSystem.getTmpDir()
   await FileSystem.writeFile(`${tmpDir}/cancel.csv`, 'key,value\na,1\n')
   await Main.openUri(`${tmpDir}/cancel.csv`)
-  const cell = Locator('[name="cell:0:1"]')
+  const cell = Locator('.TableBody .TableRow').nth(0).locator('.TableCell').nth(1)
   await expect(cell).toHaveText('a')
   await cell.dispatchEvent('dblclick', { bubbles: true } as unknown as string)
   const editor = Locator('[name="cellEditor"]')
