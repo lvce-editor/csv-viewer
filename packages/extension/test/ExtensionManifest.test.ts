@@ -5,6 +5,7 @@ test('uses the isolated virtual DOM view API without a separate RPC worker', asy
   const text = await readFile(new URL('../extension.json', import.meta.url), 'utf8')
   const manifest = JSON.parse(text)
   expect(manifest.isolated).toBe(true)
+  expect(manifest.categories).toEqual(['Other'])
   expect(manifest.activation).toEqual(['onView:builtin.csv-viewer'])
   expect(manifest.rpc).toBeUndefined()
   expect(manifest.webViews).toBeUndefined()

@@ -9,6 +9,7 @@
   "workerName": "CSV Viewer Worker",
   "activation": ["onView:builtin.csv-viewer"],
   "repository": "https://github.com/lvce-editor/csv-viewer",
+  "categories": ["Other"],
   "languages": [],
   "views": [
     {
