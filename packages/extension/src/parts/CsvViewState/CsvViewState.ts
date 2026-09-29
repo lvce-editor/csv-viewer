@@ -7,6 +7,9 @@ export interface CsvViewState {
   readonly focusSelector: string
   readonly header: CsvRow
   readonly rowIndex: number
+  readonly scrollLeft: number
+  readonly scrollTop: number
   readonly textArea: boolean
   readonly value: string
+  readonly viewportHeight: number
 }

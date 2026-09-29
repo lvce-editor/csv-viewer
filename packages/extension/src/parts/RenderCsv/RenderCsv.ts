@@ -6,6 +6,8 @@ const handleClick = 'handleClick'
 const handleDoubleClick = 'handleDoubleClick'
 const handleInput = 'handleInput'
 const handleKeyDown = 'handleKeyDown'
+const rowHeight = 20
+const overscan = 50
 
 const TabIndex = {
   Focusable: 0,
@@ -15,25 +17,40 @@ const TabIndex = {
 const tableHeadNode: VirtualDomNode = {
   childCount: 1,
   className: 'TableHead',
-  type: VirtualDomElements.THead,
+  type: VirtualDomElements.Div,
 }
 
 const emptyHeadingNode: VirtualDomNode = {
   childCount: 0,
   className: mergeClassNames('TableHeading', 'TableCellInfo'),
-  type: VirtualDomElements.Th,
+  type: VirtualDomElements.Div,
 }
 
 const headingCellNode: VirtualDomNode = {
   childCount: 1,
   className: mergeClassNames('TableHeading', 'TableCell'),
-  type: VirtualDomElements.Th,
+  type: VirtualDomElements.Div,
 }
 
 const tableNode: VirtualDomNode = {
   childCount: 2,
   className: 'Table',
-  type: VirtualDomElements.Table,
+  type: VirtualDomElements.Div,
+}
+
+const scrollContainerNode: VirtualDomNode = {
+  childCount: 1,
+  className: 'ScrollContainer',
+  type: VirtualDomElements.Div,
+}
+
+const getVisibleRows = (state: Readonly<CsvViewState>): { readonly end: number; readonly start: number } => {
+  const { cells, scrollTop, viewportHeight } = state
+  const maxScrollTop = Math.max(0, cells.length * rowHeight - viewportHeight)
+  const clampedScrollTop = Math.min(Math.max(scrollTop, 0), maxScrollTop)
+  const start = Math.min(cells.length, Math.max(0, Math.floor(clampedScrollTop / rowHeight) - overscan))
+  const end = Math.min(cells.length, Math.ceil((clampedScrollTop + viewportHeight) / rowHeight) + overscan)
+  return { end: Math.max(start, end), start }
 }
 
 export const getCellName = (rowIndex: number, columnIndex: number): string => {
@@ -63,8 +80,11 @@ const renderCell = (
       onClick: handleClick,
       ...(columnIndex > 0 && { onDblClick: handleDoubleClick }),
       onKeyDown: handleKeyDown,
+      // The constants package does not export the valid ARIA gridcell role.
+      // eslint-disable-next-line virtual-dom/prefer-constants
+      role: 'gridcell',
       tabIndex: focused ? TabIndex.Focusable : TabIndex.Programmatic,
-      type: VirtualDomElements.Td,
+      type: VirtualDomElements.Div,
     },
     text(value),
   ]
@@ -76,7 +96,7 @@ const renderHead = (header: CsvRow): readonly VirtualDomNode[] => {
     {
       childCount: header.length + 1,
       className: 'TableRow',
-      type: VirtualDomElements.Tr,
+      type: VirtualDomElements.Div,
     },
     emptyHeadingNode,
   ]
@@ -88,19 +108,22 @@ const renderHead = (header: CsvRow): readonly VirtualDomNode[] => {
 
 const renderBody = (state: Readonly<CsvViewState>): readonly VirtualDomNode[] => {
   const { cells } = state
+  const { end, start } = getVisibleRows(state)
   const dom: VirtualDomNode[] = [
     {
-      childCount: cells.length,
+      childCount: end - start,
       className: 'TableBody',
-      type: VirtualDomElements.TBody,
+      style: `height: ${cells.length * rowHeight}px; position: relative;`,
+      type: VirtualDomElements.Div,
     },
   ]
-  for (let rowIndex = 0; rowIndex < cells.length; rowIndex++) {
+  for (let rowIndex = start; rowIndex < end; rowIndex++) {
     const row = cells[rowIndex]
     dom.push({
       childCount: row.length + 1,
       className: 'TableRow',
-      type: VirtualDomElements.Tr,
+      style: `position: absolute; top: ${rowIndex * rowHeight}px;`,
+      type: VirtualDomElements.Div,
     })
     dom.push(...renderCell(state, rowIndex, 0, String(rowIndex + 1), true))
     for (let columnIndex = 0; columnIndex < row.length; columnIndex++) {
@@ -111,18 +134,15 @@ const renderBody = (state: Readonly<CsvViewState>): readonly VirtualDomNode[] =>
 }
 
 const renderTextArea = (state: Readonly<CsvViewState>): VirtualDomNode => {
-  const { columnIndex, rowIndex, value } = state
-  const { x, y } = getTextAreaPosition(rowIndex, columnIndex)
+  const { columnIndex, rowIndex, scrollLeft, scrollTop, value } = state
+  const { x, y } = getTextAreaPosition(rowIndex, columnIndex, scrollLeft, scrollTop)
   return {
     childCount: 0,
     className: 'TextArea',
     name: 'cellEditor',
     onInput: handleInput,
     onKeyDown: handleKeyDown,
-    style: {
-      left: `${x}px`,
-      top: `${y}px`,
-    },
+    style: `left: ${x}px; top: ${y}px;`,
     type: VirtualDomElements.TextArea,
     value,
   }
@@ -141,6 +161,7 @@ export const renderCsv = (state: Readonly<CsvViewState>): readonly VirtualDomNod
       className: 'Content',
       type: VirtualDomElements.Div,
     },
+    scrollContainerNode,
     tableNode,
     ...renderHead(header),
     ...renderBody(state),

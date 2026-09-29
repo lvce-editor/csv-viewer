@@ -8,6 +8,15 @@ export const view: InstanceView<CsvViewInstance, CsvViewState> = {
   create: createInstance,
   eventListeners: [
     {
+      name: 'handleWheel',
+      params: ['handleWheel', 'event.deltaY'],
+      preventDefault: true,
+    },
+    {
+      name: 'handleScroll',
+      params: ['handleScroll', 'event.target.scrollTop', 'event.target.clientHeight', 'event.target.scrollLeft'],
+    },
+    {
       name: 'handleDoubleClick',
       params: ['handleDoubleClick', 'event.target.name'],
       preventDefault: true,
