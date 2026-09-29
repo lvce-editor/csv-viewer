@@ -26,15 +26,43 @@ body {
   width: 100%;
   height: 100%;
   contain: strict;
+  position: relative;
+  overflow: hidden;
   font-family: var(--FontFamily);
   background: var(--MainBackground);
   color: var(--Foreground);
 }
 
+.ScrollContainer {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
 .Table {
-  contain: content;
-  border: 1px solid var(--TableBorderColor);
-  border-collapse: collapse;
+  position: relative;
+  width: max-content;
+  min-width: 100%;
+}
+
+.TableHead {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--MainBackground);
+}
+
+.TableHead .TableRow,
+.TableBody .TableRow {
+  display: flex;
+  width: max-content;
+}
+
+.TableBody {
+  display: block;
+  width: max-content;
 }
 
 .TableHeading {
@@ -45,6 +73,8 @@ body {
 .TableCell {
   border: 1px solid var(--TableBorderColor);
   contain: strict;
+  display: block;
+  flex: none;
   width: var(--TableCellWidth);
   height: var(--TableCellHeight);
   padding-left: 10px;

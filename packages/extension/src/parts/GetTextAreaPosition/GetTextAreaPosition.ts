@@ -3,7 +3,7 @@ export interface Position {
   readonly y: number
 }
 
-export const getTextAreaPosition = (rowIndex: number, columnIndex: number): Position => {
+export const getTextAreaPosition = (rowIndex: number, columnIndex: number, scrollLeft = 0, scrollTop = 0): Position => {
   const rowHeight = 20
   const columnWidth = 120
   const firstColumnWidth = 40
@@ -15,7 +15,7 @@ export const getTextAreaPosition = (rowIndex: number, columnIndex: number): Posi
     x += (columnIndex - 1) * columnWidth
   }
   return {
-    x: x + 1,
-    y: rowHeight * (rowIndex + 1) + 1,
+    x: x - scrollLeft + 1,
+    y: rowHeight * (rowIndex + 1) - scrollTop + 1,
   }
 }

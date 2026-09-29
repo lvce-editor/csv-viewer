@@ -10,7 +10,10 @@ export interface CsvViewInstance extends VirtualDomViewInstance {
   readonly getContext: () => Readonly<Record<string, boolean>>
   readonly handleDoubleClick: (name: unknown) => void
   readonly handleKeyDown: (name: unknown, key: unknown) => void
+  readonly handleScroll: (scrollTop: unknown, viewportHeight: unknown, scrollLeft: unknown) => void
+  readonly handleWheel: (deltaY: unknown) => void
   readonly renderFocus: () => string
+  readonly renderScrollPosition: () => readonly [string, number]
   readonly saveState: () => unknown
   readonly setComponentState: (state: CsvViewState) => void
 }
@@ -57,6 +60,18 @@ const getCellValue = (state: Readonly<CsvViewState>, rowIndex: number, columnInd
   return state.cells[rowIndex]?.[columnIndex - 1] || ''
 }
 
+const getScrollTopForRow = (rowIndex: number, scrollTop: number, viewportHeight: number): number => {
+  const rowTop = (rowIndex + 1) * 20
+  if (rowTop < scrollTop + 20) {
+    return Math.max(0, rowIndex * 20)
+  }
+  const rowBottom = rowTop + 20
+  if (rowBottom > scrollTop + viewportHeight) {
+    return Math.max(0, rowBottom - viewportHeight)
+  }
+  return scrollTop
+}
+
 export const createInstanceWithReadFile = async (context: ViewContext | undefined, read: ReadFile): Promise<CsvViewInstance> => {
   const uri = getUri(context)
   const parsed = parseCsv(uri ? await read(toFileUri(uri)) : '')
@@ -68,8 +83,11 @@ export const createInstanceWithReadFile = async (context: ViewContext | undefine
     focusSelector: '',
     header: parsed.header,
     rowIndex: getSavedNumber(savedState?.rowIndex),
+    scrollLeft: 0,
+    scrollTop: 0,
     textArea: false,
     value: typeof savedState?.value === 'string' ? savedState.value : '',
+    viewportHeight: 600,
   }
 
   const updateState = (newState: Partial<CsvViewState>): void => {
@@ -188,13 +206,32 @@ export const createInstanceWithReadFile = async (context: ViewContext | undefine
       }
       const maxColumnIndex = Math.max(0, cells[rowIndex]?.length || header.length)
       columnIndex = Math.min(maxColumnIndex, columnIndex)
+      const nextScrollTop = getScrollTopForRow(rowIndex, state.scrollTop, state.viewportHeight)
+      updateState({ scrollTop: nextScrollTop })
       focusCell(rowIndex, columnIndex)
+    },
+    handleScroll(scrollTop: unknown, viewportHeight: unknown, scrollLeft: unknown): void {
+      if (typeof scrollTop !== 'number' || typeof viewportHeight !== 'number' || typeof scrollLeft !== 'number') {
+        return
+      }
+      updateState({ scrollLeft, scrollTop, viewportHeight })
+    },
+    handleWheel(deltaY: unknown): void {
+      if (typeof deltaY !== 'number' || !Number.isFinite(deltaY)) {
+        return
+      }
+      const maxScrollTop = Math.max(0, state.cells.length * 20 - state.viewportHeight)
+      const scrollTop = Math.min(Math.max(state.scrollTop + deltaY, 0), maxScrollTop)
+      updateState({ scrollTop })
     },
     render(): readonly VirtualDomNode[] {
       return renderCsv(state)
     },
     renderFocus(): string {
       return state.focusSelector
+    },
+    renderScrollPosition(): readonly [string, number] {
+      return ['.ScrollContainer', state.scrollTop]
     },
     saveState(): unknown {
       return {
