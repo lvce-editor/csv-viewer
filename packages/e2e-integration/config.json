@@ -1,0 +1,4 @@
+{
+  "artifacts": [["dist", "extensions/builtin.csv-viewer"]],
+  "scripts": []
+}
