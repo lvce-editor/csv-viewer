@@ -2,7 +2,7 @@ import type { Test } from '@lvce-editor/test-with-playwright'
 
 export const name = 'csv-viewer.edit-cancel'
 
-export const test: Test = async ({ FileSystem, Main, Locator, KeyBoard, expect }) => {
+export const test: Test = async ({ expect, FileSystem, KeyBoard, Locator, Main }) => {
   const tmpDir = await FileSystem.getTmpDir()
   await FileSystem.writeFile(`${tmpDir}/cancel.csv`, 'key,value\na,1\n')
   await Main.openUri(`${tmpDir}/cancel.csv`)
