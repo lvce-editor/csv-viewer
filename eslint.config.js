@@ -32,8 +32,11 @@ export default defineConfig([
     rules: { 'github-actions/node-version-file': 'off', 'github-actions/on': 'off' },
   },
   {
-    // Preserve real DOM input events covered by the migrated application scenarios.
-    files: ['packages/e2e-integration/src/viewlet.extension-view-explorer-focus.ts'],
+    // Exercise real DOM input and menu events in application integration scenarios.
+    files: [
+      'packages/e2e-integration/src/viewlet.extension-view-explorer-focus.ts',
+      'packages/e2e-integration/src/viewlet.csv-save.ts',
+    ],
     rules: { '@typescript-eslint/no-deprecated': 'off' },
   },
 ])

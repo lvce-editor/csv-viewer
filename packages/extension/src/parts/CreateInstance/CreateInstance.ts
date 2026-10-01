@@ -1,7 +1,7 @@
 import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
-import { readFile, type ViewContext, type ViewEvent, type VirtualDomViewInstance } from '@lvce-editor/api'
+import { readFile, writeFile, type ViewContext, type ViewEvent, type VirtualDomViewInstance } from '@lvce-editor/api'
 import type { CsvViewState } from '../CsvViewState/CsvViewState.ts'
-import { parseCsv } from '../ParseCsv/ParseCsv.ts'
+import { parseCsv, serializeCsvEdits } from '../ParseCsv/ParseCsv.ts'
 import { getCellName, renderCsv } from '../RenderCsv/RenderCsv.ts'
 import { toFileUri } from '../ToFileUri/ToFileUri.ts'
 
@@ -12,8 +12,10 @@ export interface CsvViewInstance extends VirtualDomViewInstance {
   readonly handleKeyDown: (name: unknown, key: unknown) => void
   readonly handleScroll: (scrollTop: unknown, viewportHeight: unknown, scrollLeft: unknown) => void
   readonly handleWheel: (deltaY: unknown) => void
+  readonly isDirty: () => boolean
   readonly renderFocus: () => string
   readonly renderScrollPosition: () => readonly [string, number]
+  readonly save: () => Promise<void>
   readonly saveState: () => unknown
   readonly setComponentState: (state: CsvViewState) => void
 }
@@ -72,9 +74,17 @@ const getScrollTopForRow = (rowIndex: number, scrollTop: number, viewportHeight:
   return scrollTop
 }
 
-export const createInstanceWithReadFile = async (context: ViewContext | undefined, read: ReadFile): Promise<CsvViewInstance> => {
+export const createInstanceWithReadFile = async (
+  context: ViewContext | undefined,
+  read: ReadFile,
+  write: (uri: string, content: string) => Promise<void> = writeFile,
+): Promise<CsvViewInstance> => {
   const uri = getUri(context)
-  const parsed = parseCsv(uri ? await read(toFileUri(uri)) : '')
+  const original = uri ? await read(toFileUri(uri)) : ''
+  const parsed = parseCsv(original)
+  let savedContent = original
+  let serializedCells = parsed.content
+  let serializedContent = original
   const savedState = context?.state as SavedState | undefined
   let state: CsvViewState = {
     cells: parsed.content,
@@ -88,6 +98,14 @@ export const createInstanceWithReadFile = async (context: ViewContext | undefine
     textArea: false,
     value: typeof savedState?.value === 'string' ? savedState.value : '',
     viewportHeight: 600,
+  }
+
+  const getContent = (): string => {
+    if (serializedCells !== state.cells) {
+      serializedContent = serializeCsvEdits(original, state.cells)
+      serializedCells = state.cells
+    }
+    return serializedContent
   }
 
   const updateState = (newState: Partial<CsvViewState>): void => {
@@ -224,6 +242,9 @@ export const createInstanceWithReadFile = async (context: ViewContext | undefine
       const scrollTop = Math.min(Math.max(state.scrollTop + deltaY, 0), maxScrollTop)
       updateState({ scrollTop })
     },
+    isDirty(): boolean {
+      return getContent() !== savedContent
+    },
     render(): readonly VirtualDomNode[] {
       return renderCsv(state)
     },
@@ -232,6 +253,17 @@ export const createInstanceWithReadFile = async (context: ViewContext | undefine
     },
     renderScrollPosition(): readonly [string, number] {
       return ['.ScrollContainer', state.scrollTop]
+    },
+    async save(): Promise<void> {
+      const content = getContent()
+      if (content === savedContent) {
+        return
+      }
+      if (!uri) {
+        throw new Error('Cannot save a CSV document without a URI')
+      }
+      await write(toFileUri(uri), content)
+      savedContent = content
     },
     saveState(): unknown {
       return {
