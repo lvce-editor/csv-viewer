@@ -165,6 +165,20 @@ export const createInstanceWithReadFile = async (
     }
   }
 
+  const startEditing = (rowIndex: number, columnIndex: number): void => {
+    const maxRowIndex = Math.max(0, state.cells.length - 1)
+    if (rowIndex < 0 || rowIndex > maxRowIndex || columnIndex <= 0 || columnIndex > state.header.length) {
+      return
+    }
+    updateState({
+      columnIndex,
+      rowIndex,
+      textArea: true,
+      value: getCellValue(state, rowIndex, columnIndex),
+    })
+    requestFocus('[name="cellEditor"]')
+  }
+
   const addRow = (): void => {
     const rowIndex = state.cells.length
     updateState({ cells: [...state.cells, createEmptyRow(state.header.length)] })
@@ -231,16 +245,10 @@ export const createInstanceWithReadFile = async (
     },
     handleDoubleClick(name: unknown): void {
       const position = parseCellName(name)
-      if (!position || position.columnIndex <= 0) {
+      if (!position) {
         return
       }
-      updateState({
-        columnIndex: position.columnIndex,
-        rowIndex: position.rowIndex,
-        textArea: true,
-        value: getCellValue(state, position.rowIndex, position.columnIndex),
-      })
-      requestFocus('[name="cellEditor"]')
+      startEditing(position.rowIndex, position.columnIndex)
     },
     handleEvent(event: Readonly<ViewEvent>): void {
       if (event.type === 'click') {
@@ -290,6 +298,9 @@ export const createInstanceWithReadFile = async (
         case 'Backspace':
         case 'Delete':
           clearCell(rowIndex, columnIndex)
+          return
+        case 'Enter':
+          startEditing(rowIndex, columnIndex)
           return
         default:
           return

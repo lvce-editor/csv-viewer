@@ -40,6 +40,22 @@ test('edits a cell directly in the isolated view instance', async () => {
   expect(instance.renderFocus()).toBe('[id="cell:0:1"]')
 })
 
+test('starts editing the focused cell with Enter', async () => {
+  const instance = await createInstanceWithReadFile(createContext(), async () => 'name,quantity\nApple,10')
+  instance.handleKeyDown('cell:0:2', 'Enter')
+  expect(instance.getComponentState().textArea).toBe(true)
+  expect(instance.getComponentState().value).toBe('10')
+  expect(instance.render()).toContainEqual(expect.objectContaining({ name: 'cellEditor', value: '10' }))
+  expect(instance.renderFocus()).toBe('[name="cellEditor"]')
+})
+
+test.each(['cell:0:0', 'cell:0:3', 'cell:4:1'])('does not edit non-data cell %s with Enter', async (name) => {
+  const instance = await createInstanceWithReadFile(createContext(), async () => 'name,quantity\nApple,10')
+  instance.handleKeyDown(name, 'Enter')
+  expect(instance.getComponentState().textArea).toBe(false)
+  expect(instance.render()).not.toContainEqual(expect.objectContaining({ name: 'cellEditor' }))
+})
+
 test('renders a complete editable row for a header-only CSV and preserves neighboring fields', async () => {
   const instance = await createInstanceWithReadFile(createContext(), async () => 'name,quantity,note\n')
   expect(instance.getComponentState().cells).toEqual([])
