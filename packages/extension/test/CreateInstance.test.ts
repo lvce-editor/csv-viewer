@@ -40,6 +40,51 @@ test('edits a cell directly in the isolated view instance', async () => {
   expect(instance.renderFocus()).toBe('[id="cell:0:1"]')
 })
 
+test('renders a complete editable row for a header-only CSV and preserves neighboring fields', async () => {
+  const instance = await createInstanceWithReadFile(createContext(), async () => 'name,quantity,note\n')
+  expect(instance.getComponentState().cells).toEqual([])
+  for (const name of ['cell:0:1', 'cell:0:2', 'cell:0:3']) {
+    expect(instance.render()).toContainEqual(expect.objectContaining({ name }))
+  }
+
+  instance.handleDoubleClick('cell:0:1')
+  instance.handleEvent?.({ name: 'cellEditor', type: 'input', value: 'Apple' })
+  instance.handleKeyDown('cellEditor', 'Enter')
+  instance.handleDoubleClick('cell:0:2')
+  instance.handleEvent?.({ name: 'cellEditor', type: 'input', value: '4' })
+  instance.handleKeyDown('cellEditor', 'Enter')
+  expect(instance.getComponentState().cells).toEqual([['Apple', '4', '']])
+})
+
+test('supports empty CSVs and repeated row and column insertion', async () => {
+  const instance = await createInstanceWithReadFile(createContext(), async () => '')
+  expect(instance.render()).toContainEqual(expect.objectContaining({ name: 'cell:0:1' }))
+  instance.handleEvent?.({ name: 'addColumn', type: 'click' })
+  expect(instance.getComponentState().header).toEqual(['Column 1', 'Column 2'])
+  expect(instance.getComponentState().cells).toEqual([])
+  instance.handleEvent?.({ name: 'addRow', type: 'click' })
+  instance.handleEvent?.({ name: 'addRow', type: 'click' })
+  expect(instance.getComponentState().cells).toEqual([
+    ['', ''],
+    ['', ''],
+  ])
+  expect(instance.render()).toContainEqual(expect.objectContaining({ name: 'cell:1:2' }))
+})
+
+test('pads ragged rows to the widest existing row before extending columns', async () => {
+  const instance = await createInstanceWithReadFile(createContext(), async () => 'name,quantity,note\nApple,4\nPear,2,ripe,extra')
+  expect(instance.getComponentState().header).toEqual(['name', 'quantity', 'note', ''])
+  expect(instance.getComponentState().cells).toEqual([
+    ['Apple', '4', '', ''],
+    ['Pear', '2', 'ripe', 'extra'],
+  ])
+  instance.handleEvent?.({ name: 'addColumn', type: 'click' })
+  expect(instance.getComponentState().cells).toEqual([
+    ['Apple', '4', '', '', ''],
+    ['Pear', '2', 'ripe', 'extra', ''],
+  ])
+})
+
 test('cancels editing and preserves the old value', async () => {
   const instance = await createInstanceWithReadFile(createContext(), async () => 'key\na')
   instance.handleDoubleClick('cell:0:1')
@@ -142,6 +187,37 @@ test.each([
   expect(disk).toBe(`name,quantity,note\nApple,${after},red\nPear,20,green\n`)
   const reopened = await createInstanceWithReadFile(createContext(), read, write)
   expect(reopened.getComponentState().cells[0]).toEqual(['Apple', after, 'red'])
+})
+
+test('saves added rows and columns and restores them after reopening', async () => {
+  let disk = 'name,quantity,note\n'
+  const read = async () => disk
+  const write = jest.fn(async (_uri: string, content: string) => {
+    disk = content
+  })
+  const instance = await createInstanceWithReadFile(createContext(), read, write)
+  const edit = (row: number, column: number, value: string): void => {
+    instance.handleDoubleClick(`cell:${row}:${column}`)
+    instance.handleEvent?.({ name: 'cellEditor', type: 'input', value })
+    instance.handleKeyDown('cellEditor', 'Enter')
+  }
+  edit(0, 1, 'Apple')
+  edit(0, 2, '4')
+  edit(0, 3, 'fresh')
+  instance.handleEvent?.({ name: 'addRow', type: 'click' })
+  edit(1, 1, 'Pear')
+  instance.handleEvent?.({ name: 'addColumn', type: 'click' })
+  edit(0, 4, 'fruit')
+
+  expect(instance.isDirty()).toBe(true)
+  await instance.save()
+  expect(disk).toBe('name,quantity,note,Column 4\nApple,4,fresh,fruit\nPear,,,\n')
+  const reopened = await createInstanceWithReadFile(createContext(), read, write)
+  expect(reopened.getComponentState().header).toEqual(['name', 'quantity', 'note', 'Column 4'])
+  expect(reopened.getComponentState().cells).toEqual([
+    ['Apple', '4', 'fresh', 'fruit'],
+    ['Pear', '', '', ''],
+  ])
 })
 
 test('Escape and unchanged commits leave the document clean', async () => {

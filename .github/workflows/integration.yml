@@ -53,3 +53,8 @@ jobs:
         working-directory: .tmp/lvce-integration/packages/extension-host-worker-tests
         run: npm run e2e:headless -- --test-name-prefix=viewlet.csv-save
         shell: bash
+      - name: Test CSV grid editing
+        if: matrix.os == 'ubuntu-24.04'
+        working-directory: .tmp/lvce-integration/packages/extension-host-worker-tests
+        run: npm run e2e:headless -- --test-name-prefix=viewlet.csv-edit-grid
+        shell: bash
