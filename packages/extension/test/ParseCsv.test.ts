@@ -34,6 +34,27 @@ test('parses empty fields and quoted multiline records without phantom final row
   expect(() => parseCsv('a\n"unterminated')).toThrow('Invalid or unterminated quoted CSV field')
 })
 
+test('parses quoted commas, escaped quotes, and multiline fields as logical records', () => {
+  const original = 'name,quantity,note\n"Apple, pear",10,"say ""hi"""\nPlum,20,"two\nlines"\n'
+  const parsed = parseCsv(original)
+  expect(parsed).toEqual({
+    content: [
+      ['Apple, pear', '10', 'say "hi"'],
+      ['Plum', '20', 'two\nlines'],
+    ],
+    header: ['name', 'quantity', 'note'],
+  })
+  const edited = serializeCsvEdits(original, parsed.header, [
+    ['Apple, pear', '11', 'say "hi"'],
+    ['Plum', '20', 'two\nlines'],
+  ])
+  expect(edited).toBe(original.replace(',10,', ',11,'))
+  expect(parseCsv(edited).content).toEqual([
+    ['Apple, pear', '11', 'say "hi"'],
+    ['Plum', '20', 'two\nlines'],
+  ])
+})
+
 test('does not turn the final newline into an extra row', () => {
   expect(parseCsv('name,quantity,note\n')).toEqual({
     content: [],
