@@ -15,7 +15,7 @@ const waitFor = async (assertion: () => Promise<void>): Promise<void> => {
 }
 
 export const test: Test = async ({ expect, FileSystem, KeyBoard, Locator, Main }) => {
-  const tmpDir = await FileSystem.getTmpDir()
+  const tmpDir = await FileSystem.getTmpDir({ scheme: 'file' })
   const headerOnlyUri = `${tmpDir}/header-only.csv`
   const emptyUri = `${tmpDir}/empty.csv`
   await FileSystem.writeFile(headerOnlyUri, 'name,quantity,note\n')
