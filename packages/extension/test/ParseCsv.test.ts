@@ -6,7 +6,8 @@ test('preserves spaces and decodes quoted delimiters and quotes', () => {
 })
 
 test.each(['\n', '\r\n', '\r'])('preserves newline convention %j and untouched bytes', (newline) => {
-  const original = `${String.fromCharCode(0xfe_ff)}name,quantity,note${newline}"Apple",10,"red"${newline}Pear,,green${newline}`
+  const byteOrderMark = '\u{FEFF}' // cspell:ignore FEFF
+  const original = `${byteOrderMark}name,quantity,note${newline}"Apple",10,"red"${newline}Pear,,green${newline}`
   const parsed = parseCsv(original)
   expect(parsed.content).toEqual([
     ['Apple', '10', 'red'],

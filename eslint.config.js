@@ -33,7 +33,10 @@ export default defineConfig([
   },
   {
     // Exercise real DOM input and menu events in application integration scenarios.
-    files: ['packages/e2e-integration/src/viewlet.extension-view-explorer-focus.ts', 'packages/e2e-integration/src/viewlet.csv-save.ts'],
+    files: [
+      'packages/e2e-integration/src/viewlet.extension-view-explorer-focus.ts',
+      'packages/e2e-integration/src/viewlet.csv-save.ts',
+    ],
     rules: { '@typescript-eslint/no-deprecated': 'off' },
   },
 ])
