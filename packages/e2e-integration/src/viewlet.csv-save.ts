@@ -5,13 +5,14 @@ export const name = 'viewlet.csv-save'
 // Enable with the integration runtime containing lvce-editor/lvce-editor#15592 and main-area-worker#818.
 export const skip = 1
 
-export const test: Test = async ({ ContextMenu, Dialog, expect, FileSystem, KeyBoard, Locator, Main }) => {
-  const tmpDir = await FileSystem.getTmpDir()
+export const test: Test = async ({ Dialog, expect, FileSystem, KeyBoard, Locator, Main }) => {
+  const tmpDir = await FileSystem.getTmpDir({ scheme: 'file' })
   const uri = `${tmpDir}/save.csv`
   const original = 'name,quantity,note\nApple,10,red\nPear,,green\nPlum,30,purple\n'
   await FileSystem.writeFile(uri, original)
   await Main.openUri(uri)
   const tab = Locator('.MainTab[title$="save.csv"]')
+  const dirtyTab = Locator('.MainTab.MainTabModified[title$="save.csv"]')
   const cell = Locator('[id="cell:0:2"]')
   const editor = Locator('[name="cellEditor"]')
   await expect(cell).toHaveText('10')
@@ -36,7 +37,7 @@ export const test: Test = async ({ ContextMenu, Dialog, expect, FileSystem, KeyB
   await expect(cell).toHaveText('15')
 
   await KeyBoard.press('Control+s')
-  await expect(tab).not.toHaveClass('MainTabModified')
+  await expect(dirtyTab).toHaveCount(0)
   const replaced = original.replace('Apple,10,', 'Apple,15,')
   await assertDisk(replaced)
   await Main.closeActiveEditor()
@@ -45,16 +46,18 @@ export const test: Test = async ({ ContextMenu, Dialog, expect, FileSystem, KeyB
 
   await edit(1, '42')
   await Locator('.TitleBarTopLevelEntry', { hasText: 'File' }).click()
-  await ContextMenu.selectItem('Save')
+  await expect(Locator('.Menu')).toBeVisible()
+  await Locator('.MenuItem', { hasText: 'Save' }).nth(0).click()
   const filled = replaced.replace('Pear,,', 'Pear,42,')
+  await expect(dirtyTab).toHaveCount(0)
   await assertDisk(filled)
-  await expect(tab).not.toHaveClass('MainTabModified')
   await edit(0, '')
   await Locator('.TitleBarTopLevelEntry', { hasText: 'File' }).click()
-  await ContextMenu.selectItem('Save All')
+  await expect(Locator('.Menu')).toBeVisible()
+  await Locator('.MenuItem', { hasText: 'Save All' }).click()
   const cleared = filled.replace('Apple,15,', 'Apple,,')
+  await expect(dirtyTab).toHaveCount(0)
   await assertDisk(cleared)
-  await expect(tab).not.toHaveClass('MainTabModified')
   await Main.closeActiveEditor()
   await Main.openUri(uri)
   await expect(cell).toHaveText('')
@@ -67,6 +70,6 @@ export const test: Test = async ({ ContextMenu, Dialog, expect, FileSystem, KeyB
   await editor.type('cancelled')
   await KeyBoard.press('Escape')
   await expect(cell).toHaveText('')
-  await expect(tab).not.toHaveClass('MainTabModified')
+  await expect(dirtyTab).toHaveCount(0)
   await assertDisk(cleared)
 }
