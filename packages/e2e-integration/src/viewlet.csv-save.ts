@@ -13,7 +13,7 @@ export const test: Test = async ({ ContextMenu, Dialog, expect, FileSystem, KeyB
   const editor = Locator('[name="cellEditor"]')
   await expect(cell).toHaveText('10')
   const edit = async (row: number, value: string): Promise<void> => {
-    await Locator(`[id="cell:${row}:2"]`).dispatchEvent('dblclick', { bubbles: true })
+    await Locator(`[id="cell:${row}:2"]`).dispatchEvent('dblclick', { bubbles: true } as unknown as string)
     await expect(editor).toBeFocused()
     await editor.type(value)
     await KeyBoard.press('Enter')
@@ -59,7 +59,7 @@ export const test: Test = async ({ ContextMenu, Dialog, expect, FileSystem, KeyB
   await expect(Locator('[id="cell:0:1"]')).toHaveText('Apple')
   await expect(Locator('[id="cell:0:3"]')).toHaveText('red')
 
-  await cell.dispatchEvent('dblclick', { bubbles: true })
+  await cell.dispatchEvent('dblclick', { bubbles: true } as unknown as string)
   await expect(editor).toBeFocused()
   await editor.type('cancelled')
   await KeyBoard.press('Escape')

@@ -76,7 +76,7 @@ export const test: Test = async ({ Command, expect, Explorer, FileSystem, KeyBoa
   await KeyBoard.press('ArrowUp')
   await waitFor(() => expect(firstCell).toBeFocused())
 
-  await firstCell.dispatchEvent('dblclick', { bubbles: true })
+  await firstCell.dispatchEvent('dblclick', { bubbles: true } as unknown as string)
   const editor = Locator('[name="cellEditor"]')
   await waitFor(() => expect(editor).toBeFocused())
   await editor.type('edited')
@@ -85,7 +85,7 @@ export const test: Test = async ({ Command, expect, Explorer, FileSystem, KeyBoa
   await waitFor(() => expect(firstCell).toBeFocused())
   await waitFor(() => expect(firstFile).toHaveId('TreeItemActive'))
 
-  await firstCell.dispatchEvent('dblclick', { bubbles: true })
+  await firstCell.dispatchEvent('dblclick', { bubbles: true } as unknown as string)
   await waitFor(() => expect(editor).toBeFocused())
   await editor.type('discarded')
   await KeyBoard.press('Escape')
