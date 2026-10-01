@@ -88,6 +88,7 @@ export const test: Test = async ({ expect, FileSystem, KeyBoard, Locator, Main }
   await expect(Locator('[id="cell:0:3"]')).toHaveText('say "hi"')
   await expect(Locator('[id="cell:1:3"]')).toHaveText('two\nlines')
   await KeyBoard.press('Control+s')
+  await expect(Locator('.MainTab.MainTabModified[title$="quoted.csv"]')).toHaveCount(0)
   const savedQuotedCsv = await FileSystem.readFile(quotedUri)
   if (savedQuotedCsv !== quotedCsv.replace(',10,', ',11,')) {
     throw new Error(`Unexpected saved quoted CSV: ${JSON.stringify(savedQuotedCsv)}`)
