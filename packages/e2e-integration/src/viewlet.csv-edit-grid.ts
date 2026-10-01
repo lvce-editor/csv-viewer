@@ -2,6 +2,18 @@ import type { Test } from '@lvce-editor/test-with-playwright'
 
 export const name = 'viewlet.csv-edit-grid'
 
+const waitFor = async (assertion: () => Promise<void>): Promise<void> => {
+  for (let attempt = 0; attempt < 10; attempt++) {
+    try {
+      await assertion()
+      return
+    } catch (error) {
+      if (attempt === 9) throw error
+      await new Promise((resolve) => setTimeout(resolve, 50))
+    }
+  }
+}
+
 export const test: Test = async ({ expect, FileSystem, KeyBoard, Locator, Main }) => {
   const tmpDir = await FileSystem.getTmpDir()
   const headerOnlyUri = `${tmpDir}/header-only.csv`
@@ -14,6 +26,7 @@ export const test: Test = async ({ expect, FileSystem, KeyBoard, Locator, Main }
     const cell = Locator(`[id="cell:${row}:${column}"]`)
     await cell.dispatchEvent('dblclick', { bubbles: true } as unknown as string)
     const editor = Locator('[name="cellEditor"]')
+    await waitFor(() => expect(editor).toBeFocused())
     await editor.type(value)
     await KeyBoard.press('Enter')
     await expect(cell).toHaveText(value)
