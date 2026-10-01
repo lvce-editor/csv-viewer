@@ -49,9 +49,10 @@ export const test: Test = async ({ expect, FileSystem, KeyBoard, Locator, Main }
   await expect(Locator('[id="cell:0:2"]')).toHaveText('4')
   await expect(Locator('[id="cell:0:3"]')).toHaveText('fresh')
   await expect(Locator('[id="cell:1:1"]')).toHaveText('Pear')
-  await KeyBoard.press('Control+s')
   const tab = Locator('.MainTab[title$="header-only.csv"]')
-  await expect(tab).not.toHaveClass('MainTabModified')
+  await expect(tab).toHaveClass('MainTabModified')
+  await KeyBoard.press('Control+s')
+  await expect(Locator('.MainTab.MainTabModified[title$="header-only.csv"]')).toHaveCount(0)
   const saved = await FileSystem.readFile(headerOnlyUri)
   if (saved !== 'name,quantity,note,Column 4\nApple,4,fresh,fruit\nPear,,,\n') {
     throw new Error(`Unexpected saved CSV: ${JSON.stringify(saved)}`)
