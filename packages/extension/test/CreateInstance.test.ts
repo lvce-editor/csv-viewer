@@ -57,6 +57,36 @@ test('moves focus with arrow keys', async () => {
   expect(instance.renderFocus()).toBe('[id="cell:1:2"]')
 })
 
+test.each(['Backspace', 'Delete'])('clears only the selected data cell with %s', async (key) => {
+  const instance = await createInstanceWithReadFile(
+    createContext(),
+    async () => 'name,quantity,note\nApple,10,red\nPear,20,green',
+  )
+  instance.handleEvent?.({ name: 'cell:0:2', type: 'click' })
+  instance.handleKeyDown('cell:0:2', key)
+  expect(instance.getComponentState().cells).toEqual([
+    ['Apple', '', 'red'],
+    ['Pear', '20', 'green'],
+  ])
+  expect(instance.renderFocus()).toBe('[id="cell:0:2"]')
+  instance.handleKeyDown('cell:0:2', key)
+  expect(instance.getComponentState().cells).toEqual([
+    ['Apple', '', 'red'],
+    ['Pear', '20', 'green'],
+  ])
+})
+
+test('does not clear row headings, headers, invalid cells, or text while editing', async () => {
+  const instance = await createInstanceWithReadFile(createContext(), async () => 'name,quantity\nApple,10')
+  instance.handleKeyDown('cell:0:0', 'Delete')
+  instance.handleKeyDown('cell:4:1', 'Delete')
+  expect(instance.getComponentState().cells).toEqual([['Apple', '10']])
+  instance.handleDoubleClick('cell:0:2')
+  instance.handleKeyDown('cellEditor', 'Backspace')
+  expect(instance.getComponentState().value).toBe('10')
+  expect(instance.getComponentState().cells).toEqual([['Apple', '10']])
+})
+
 test('scrolls keyboard focus into view', async () => {
   const lines = ['key', ...Array.from({ length: 100 }, (_, index) => 'row ' + index)]
   const instance = await createInstanceWithReadFile(createContext(), async () => lines.join('\n'))

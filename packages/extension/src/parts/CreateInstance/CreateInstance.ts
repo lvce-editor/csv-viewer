@@ -160,6 +160,23 @@ export const createInstanceWithReadFile = async (
     requestFocus(`[id="${getCellName(rowIndex, columnIndex)}"]`)
   }
 
+  const clearCell = (rowIndex: number, columnIndex: number): void => {
+    const { cells } = state
+    const oldRow = cells[rowIndex]
+    if (!oldRow || columnIndex <= 0 || columnIndex > oldRow.length) {
+      return
+    }
+    if (oldRow[columnIndex - 1] === '') {
+      return
+    }
+    const newRow = [...oldRow]
+    newRow[columnIndex - 1] = ''
+    const newCells = [...cells]
+    newCells[rowIndex] = newRow
+    updateState({ cells: newCells, textArea: false })
+    focusCell(rowIndex, columnIndex)
+  }
+
   return {
     getComponentState(): CsvViewState {
       return state
@@ -219,6 +236,10 @@ export const createInstanceWithReadFile = async (
         case 'ArrowUp':
           rowIndex = Math.max(0, rowIndex - 1)
           break
+        case 'Backspace':
+        case 'Delete':
+          clearCell(rowIndex, columnIndex)
+          return
         default:
           return
       }
