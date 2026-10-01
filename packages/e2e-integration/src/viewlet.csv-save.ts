@@ -2,6 +2,9 @@ import type { Test } from '@lvce-editor/test-with-playwright'
 
 export const name = 'viewlet.csv-save'
 
+// Enable with the integration runtime containing lvce-editor/lvce-editor#15592 and main-area-worker#818.
+export const skip = 1
+
 export const test: Test = async ({ ContextMenu, Dialog, expect, FileSystem, KeyBoard, Locator, Main }) => {
   const tmpDir = await FileSystem.getTmpDir()
   const uri = `${tmpDir}/save.csv`
