@@ -29,7 +29,7 @@ for (const file of files) {
       const value = fn === 'getResponse' ? 'message' : '{ method, params }'
       inserts.push([
         node.initializer.body.getStart(parsed) + 1,
-        `console.log('REOPEN RPC ${file.split('/').at(-1)} ${fn}', JSON.stringify(${value}));`,
+        `__csvRecord('REOPEN RPC ${file.split('/').at(-1)} ${fn}', JSON.stringify(${value}));`,
       ])
     }
     if (ts.isAwaitExpression(node)) {
@@ -47,8 +47,16 @@ for (const file of files) {
   const helper = file.endsWith('.ts')
     ? 'const __csvTrace = async <T>(label: string, run: () => Promise<T>): Promise<T> =>'
     : 'const __csvTrace = async (label, run) =>'
+  const record = file.endsWith('.ts') ? 'const __csvRecord = (...args: string[]): void =>' : 'const __csvRecord = (...args) =>'
+  const records = file.endsWith('.ts') ? 'const __csvRecords: string[] = [];' : 'const __csvRecords = [];'
   source =
-    `\nlet __csvTraceId = 0;\n${helper} { const id = ++__csvTraceId; console.log('REOPEN start', id, label); try { const result = await run(); console.log('REOPEN done', id, label); return result; } catch (error) { console.log('REOPEN error', id, label, String(error)); throw error; } };\n` +
-    source
+    `
+let __csvTraceId = 0;
+const __csvPending = new Map();
+${records}
+${record} { __csvRecords.push(args.join(' ')); if (__csvRecords.length > 100) __csvRecords.shift(); };
+setTimeout(() => { console.log('REOPEN pending ${file.split('/').at(-1)}', JSON.stringify([...__csvPending])); console.log('REOPEN recent ${file.split('/').at(-1)}', JSON.stringify(__csvRecords)); }, 15000);
+${helper} { const id = ++__csvTraceId; __csvPending.set(id, label); try { return await run(); } finally { __csvPending.delete(id); } };
+` + source
   await writeFile(path, source)
 }
