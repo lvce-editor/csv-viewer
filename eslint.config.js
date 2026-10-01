@@ -36,6 +36,7 @@ export default defineConfig([
     files: [
       'packages/e2e-integration/src/viewlet.extension-view-explorer-focus.ts',
       'packages/e2e-integration/src/viewlet.csv-save.ts',
+      'packages/e2e-integration/src/viewlet.csv-edit-grid.ts',
     ],
     rules: { '@typescript-eslint/no-deprecated': 'off' },
   },

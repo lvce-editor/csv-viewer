@@ -29,6 +29,14 @@ interface SavedState {
 
 type ReadFile = (uri: string) => Promise<string>
 
+const createEmptyRow = (columnCount: number): string[] => {
+  const row: string[] = []
+  for (let columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+    row.push('')
+  }
+  return row
+}
+
 const parseCellName = (name: unknown): { readonly columnIndex: number; readonly rowIndex: number } | undefined => {
   if (typeof name !== 'string') {
     return undefined
@@ -62,6 +70,26 @@ const getCellValue = (state: Readonly<CsvViewState>, rowIndex: number, columnInd
   return state.cells[rowIndex]?.[columnIndex - 1] || ''
 }
 
+const getGrid = (
+  header: readonly string[],
+  cells: readonly (readonly string[])[],
+): { readonly cells: readonly (readonly string[])[]; readonly header: readonly string[] } => {
+  let columnCount = Math.max(1, header.length)
+  for (const row of cells) {
+    columnCount = Math.max(columnCount, row.length)
+  }
+  const normalizedHeader = Array.from({ length: columnCount }, (_, index) => {
+    if (header.length > 0) {
+      return header[index] || ''
+    }
+    return index === 0 ? 'Column 1' : ''
+  })
+  const normalizedCells = cells.map((row) => {
+    return row.length === columnCount ? row : Array.from({ length: columnCount }, (_, index) => row[index] || '')
+  })
+  return { cells: normalizedCells, header: normalizedHeader }
+}
+
 const getScrollTopForRow = (rowIndex: number, scrollTop: number, viewportHeight: number): number => {
   const rowTop = (rowIndex + 1) * 20
   if (rowTop < scrollTop + 20) {
@@ -82,16 +110,18 @@ export const createInstanceWithReadFile = async (
   const uri = getUri(context)
   const original = uri ? await read(toFileUri(uri)) : ''
   const parsed = parseCsv(original)
+  const grid = getGrid(parsed.header, parsed.content)
   let savedContent = original
-  let serializedCells = parsed.content
+  let serializedCells = grid.cells
+  let serializedHeader = grid.header
   let serializedContent = original
   const savedState = context?.state as SavedState | undefined
   let state: CsvViewState = {
-    cells: parsed.content,
+    cells: grid.cells,
     columnIndex: getSavedNumber(savedState?.columnIndex),
     focusRequest: false,
     focusSelector: '',
-    header: parsed.header,
+    header: grid.header,
     rowIndex: getSavedNumber(savedState?.rowIndex),
     scrollLeft: 0,
     scrollTop: 0,
@@ -101,9 +131,10 @@ export const createInstanceWithReadFile = async (
   }
 
   const getContent = (): string => {
-    if (serializedCells !== state.cells) {
-      serializedContent = serializeCsvEdits(original, state.cells)
+    if (serializedCells !== state.cells || serializedHeader !== state.header) {
+      serializedContent = serializeCsvEdits(original, state.header, state.cells)
       serializedCells = state.cells
+      serializedHeader = state.header
     }
     return serializedContent
   }
@@ -134,6 +165,20 @@ export const createInstanceWithReadFile = async (
     }
   }
 
+  const addRow = (): void => {
+    const rowIndex = state.cells.length
+    updateState({ cells: [...state.cells, createEmptyRow(state.header.length)] })
+    focusCell(rowIndex, 1)
+  }
+
+  const addColumn = (): void => {
+    const columnIndex = state.header.length
+    const header = [...state.header, `Column ${columnIndex + 1}`]
+    const cells = state.cells.map((row) => [...row, ''])
+    updateState({ cells, header })
+    focusCell(state.rowIndex, columnIndex + 1)
+  }
+
   const handleInput = (value: unknown): void => {
     if (state.textArea && typeof value === 'string') {
       updateState({ value })
@@ -147,8 +192,8 @@ export const createInstanceWithReadFile = async (
 
   const submitEdit = (): void => {
     const { cells, columnIndex, rowIndex, value } = state
-    const oldRow = cells[rowIndex]
-    if (!oldRow || columnIndex <= 0 || columnIndex > oldRow.length) {
+    const oldRow = cells[rowIndex] || (rowIndex === 0 ? createEmptyRow(state.header.length) : undefined)
+    if (!oldRow || columnIndex <= 0 || columnIndex > state.header.length) {
       cancelEdit()
       return
     }
@@ -199,7 +244,13 @@ export const createInstanceWithReadFile = async (
     },
     handleEvent(event: Readonly<ViewEvent>): void {
       if (event.type === 'click') {
-        handleCellClick(event.name)
+        if (event.name === 'addRow') {
+          addRow()
+        } else if (event.name === 'addColumn') {
+          addColumn()
+        } else {
+          handleCellClick(event.name)
+        }
       } else if (event.type === 'input') {
         handleInput(event.value)
       }
@@ -221,7 +272,7 @@ export const createInstanceWithReadFile = async (
         return
       }
       const { cells, header } = state
-      const maxRowIndex = Math.max(0, cells.length - 1)
+      const maxRowIndex = cells.length - 1
       let { columnIndex, rowIndex } = position
       switch (key) {
         case 'ArrowDown':
@@ -231,7 +282,7 @@ export const createInstanceWithReadFile = async (
           columnIndex = Math.max(0, columnIndex - 1)
           break
         case 'ArrowRight':
-          columnIndex++
+          columnIndex = Math.min(header.length, columnIndex + 1)
           break
         case 'ArrowUp':
           rowIndex = Math.max(0, rowIndex - 1)
@@ -243,8 +294,7 @@ export const createInstanceWithReadFile = async (
         default:
           return
       }
-      const maxColumnIndex = Math.max(0, cells[rowIndex]?.length || header.length)
-      columnIndex = Math.min(maxColumnIndex, columnIndex)
+      columnIndex = Math.min(header.length, Math.max(1, columnIndex))
       const nextScrollTop = getScrollTopForRow(rowIndex, state.scrollTop, state.viewportHeight)
       updateState({ scrollTop: nextScrollTop })
       focusCell(rowIndex, columnIndex)
@@ -259,7 +309,7 @@ export const createInstanceWithReadFile = async (
       if (typeof deltaY !== 'number' || !Number.isFinite(deltaY)) {
         return
       }
-      const maxScrollTop = Math.max(0, state.cells.length * 20 - state.viewportHeight)
+      const maxScrollTop = Math.max(0, Math.max(1, state.cells.length) * 20 - state.viewportHeight)
       const scrollTop = Math.min(Math.max(state.scrollTop + deltaY, 0), maxScrollTop)
       updateState({ scrollTop })
     },

@@ -2,12 +2,20 @@ import { mergeClassNames, text, VirtualDomElements, type VirtualDomNode } from '
 import type { CsvRow, CsvViewState } from '../CsvViewState/CsvViewState.ts'
 import { getTextAreaPosition } from '../GetTextAreaPosition/GetTextAreaPosition.ts'
 
-const handleClick = 'handleClick'
 const handleDoubleClick = 'handleDoubleClick'
 const handleInput = 'handleInput'
 const handleKeyDown = 'handleKeyDown'
+const handleClick = 'handleClick'
 const rowHeight = 20
 const overscan = 50
+
+const createEmptyRow = (columnCount: number): string[] => {
+  const row: string[] = []
+  for (let columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+    row.push('')
+  }
+  return row
+}
 
 const TabIndex = {
   Focusable: 0,
@@ -44,12 +52,33 @@ const scrollContainerNode: VirtualDomNode = {
   type: VirtualDomElements.Div,
 }
 
+const gridActionsNode: VirtualDomNode = {
+  childCount: 2,
+  className: 'GridActions',
+  type: VirtualDomElements.Div,
+}
+
+const addRowButtonNode: VirtualDomNode = {
+  childCount: 1,
+  name: 'addRow',
+  onClick: handleClick,
+  type: VirtualDomElements.Button,
+}
+
+const addColumnButtonNode: VirtualDomNode = {
+  childCount: 1,
+  name: 'addColumn',
+  onClick: handleClick,
+  type: VirtualDomElements.Button,
+}
+
 const getVisibleRows = (state: Readonly<CsvViewState>): { readonly end: number; readonly start: number } => {
   const { cells, scrollTop, viewportHeight } = state
-  const maxScrollTop = Math.max(0, cells.length * rowHeight - viewportHeight)
+  const rowCount = Math.max(1, cells.length)
+  const maxScrollTop = Math.max(0, rowCount * rowHeight - viewportHeight)
   const clampedScrollTop = Math.min(Math.max(scrollTop, 0), maxScrollTop)
-  const start = Math.min(cells.length, Math.max(0, Math.floor(clampedScrollTop / rowHeight) - overscan))
-  const end = Math.min(cells.length, Math.ceil((clampedScrollTop + viewportHeight) / rowHeight) + overscan)
+  const start = Math.min(rowCount, Math.max(0, Math.floor(clampedScrollTop / rowHeight) - overscan))
+  const end = Math.min(rowCount, Math.ceil((clampedScrollTop + viewportHeight) / rowHeight) + overscan)
   return { end: Math.max(start, end), start }
 }
 
@@ -107,18 +136,19 @@ const renderHead = (header: CsvRow): readonly VirtualDomNode[] => {
 }
 
 const renderBody = (state: Readonly<CsvViewState>): readonly VirtualDomNode[] => {
-  const { cells } = state
+  const { cells, header } = state
   const { end, start } = getVisibleRows(state)
+  const rowCount = Math.max(1, cells.length)
   const dom: VirtualDomNode[] = [
     {
       childCount: end - start,
       className: 'TableBody',
-      style: `height: ${cells.length * rowHeight}px; position: relative;`,
+      style: `height: ${rowCount * rowHeight}px; position: relative;`,
       type: VirtualDomElements.Div,
     },
   ]
   for (let rowIndex = start; rowIndex < end; rowIndex++) {
-    const row = cells[rowIndex]
+    const row = cells[rowIndex] || createEmptyRow(header.length)
     dom.push({
       childCount: row.length + 1,
       className: 'TableRow',
@@ -157,10 +187,15 @@ export const renderCsv = (state: Readonly<CsvViewState>): readonly VirtualDomNod
   const { header, textArea } = state
   return [
     {
-      childCount: textArea ? 2 : 1,
+      childCount: textArea ? 3 : 2,
       className: 'Content',
       type: VirtualDomElements.Div,
     },
+    gridActionsNode,
+    addRowButtonNode,
+    text('Add row'),
+    addColumnButtonNode,
+    text('Add column'),
     scrollContainerNode,
     tableNode,
     ...renderHead(header),

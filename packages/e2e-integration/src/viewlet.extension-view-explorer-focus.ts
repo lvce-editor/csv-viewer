@@ -20,7 +20,7 @@ export const test: Test = async ({ Command, expect, Explorer, FileSystem, KeyBoa
     { content: 'key,value\na,1\nb,2\n', uri: `${tmpDir}/a.csv` },
     { content: 'other,value\nc,3\nd,4\n', uri: `${tmpDir}/b.csv` },
   ])
-  await Workspace.setUri(tmpDir)
+  await Workspace.setPath(tmpDir)
   const firstFile = Locator('.TreeItem[aria-label="a.csv"]')
   const secondFile = Locator('.TreeItem[aria-label="b.csv"]')
   await waitFor(() => expect(firstFile).toBeVisible())

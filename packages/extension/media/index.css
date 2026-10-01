@@ -35,9 +35,15 @@ body {
 
 .ScrollContainer {
   width: 100%;
-  height: 100%;
+  height: calc(100% - 30px);
   overflow: auto;
   overscroll-behavior: contain;
+}
+
+.GridActions {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
 }
 
 .Table {

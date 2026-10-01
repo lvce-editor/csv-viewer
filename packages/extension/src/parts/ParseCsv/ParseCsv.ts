@@ -47,19 +47,72 @@ export const parseCsv = (content: string): ParsedCsv => {
 
 const quoteField = (value: string): string => (/[",\r\n]/.test(value) ? `"${value.replaceAll('"', '""')}"` : value)
 
-export const serializeCsvEdits = (original: string, cells: readonly CsvRow[]): string => {
-  const records = parseFields(original)
-  let result = ''
-  let offset = 0
-  for (let rowIndex = 1; rowIndex < records.length; rowIndex++) {
-    const fields = records[rowIndex].entries()
-    for (const [columnIndex, field] of fields) {
-      const value = cells[rowIndex - 1]?.[columnIndex]
-      if (typeof value === 'string' && value !== field.value) {
-        result += original.slice(offset, field.start) + quoteField(value)
-        offset = field.end
-      }
+const serializeRow = (row: CsvRow): string => row.map(quoteField).join(',')
+
+interface TextEdit {
+  readonly end: number
+  readonly start: number
+  readonly text: string
+}
+
+const getChangedFieldEdits = (fields: readonly Field[], values: CsvRow): readonly TextEdit[] => {
+  const edits: TextEdit[] = []
+  for (const [columnIndex, field] of fields.entries()) {
+    const value = values[columnIndex]
+    if (typeof value === 'string' && value !== field.value) {
+      edits.push({ end: field.end, start: field.start, text: quoteField(value) })
     }
   }
-  return result + original.slice(offset)
+  return edits
+}
+
+const getAddedFieldEdit = (
+  fields: readonly Field[],
+  values: CsvRow,
+  columnCount: number,
+  addEveryField: boolean,
+): TextEdit | undefined => {
+  const shouldAdd = addEveryField || values.slice(fields.length).some((value) => value !== '')
+  if (!shouldAdd || values.length <= fields.length) {
+    return undefined
+  }
+  const start = fields.at(-1)?.end || 0
+  const text = values
+    .slice(fields.length, columnCount)
+    .map((value) => `,${quoteField(value)}`)
+    .join('')
+  return { end: start, start, text }
+}
+
+export const serializeCsvEdits = (original: string, header: CsvRow, cells: readonly CsvRow[]): string => {
+  const records = parseFields(original)
+  const originalColumnCount = records[0]?.length || 0
+  const addsColumns = header.length > originalColumnCount
+  const lineEnding = /\r\n|\r|\n/.exec(original)?.[0] || '\n'
+  if (records.length === 0) {
+    const rows = [serializeRow(header), ...cells.map(serializeRow)]
+    return rows.join(lineEnding) + lineEnding
+  }
+  let result = ''
+  let offset = 0
+  for (const [rowIndex, fields] of records.entries()) {
+    const values = rowIndex === 0 ? header : cells[rowIndex - 1] || []
+    const addedField = getAddedFieldEdit(fields, values, header.length, addsColumns)
+    const edits = [...getChangedFieldEdits(fields, values), ...(addedField ? [addedField] : [])]
+    for (const edit of edits) {
+      result += original.slice(offset, edit.start) + edit.text
+      offset = edit.end
+    }
+  }
+  result += original.slice(offset)
+
+  const existingCellRows = records.length - 1
+  const addedRows = cells.slice(existingCellRows)
+  if (addedRows.length === 0) {
+    return result
+  }
+  const hasFinalNewline = /(?:\r\n|\r|\n)$/.test(original)
+  const prefix = hasFinalNewline ? '' : lineEnding
+  const suffix = hasFinalNewline ? lineEnding : ''
+  return result + prefix + addedRows.map((row) => serializeRow(row.slice(0, header.length))).join(lineEnding) + suffix
 }

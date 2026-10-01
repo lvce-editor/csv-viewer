@@ -14,7 +14,7 @@ test.each(['\n', '\r\n', '\r'])('preserves newline convention %j and untouched b
     ['Pear', '', 'green'],
   ])
   expect(
-    serializeCsvEdits(original, [
+    serializeCsvEdits(original, parsed.header, [
       ['Apple', '15', 'red'],
       ['Pear', '42', 'green'],
     ]),
@@ -23,7 +23,7 @@ test.each(['\n', '\r\n', '\r'])('preserves newline convention %j and untouched b
 
 test('preserves absent final newline and escapes edited values', () => {
   const original = 'name,note\nApple,red'
-  const edited = serializeCsvEdits(original, [['Apple', 'comma, quote" and\nline']])
+  const edited = serializeCsvEdits(original, ['name', 'note'], [['Apple', 'comma, quote" and\nline']])
   expect(edited).toBe('name,note\nApple,"comma, quote"" and\nline"')
   expect(parseCsv(edited).content).toEqual([['Apple', 'comma, quote" and\nline']])
 })
@@ -32,4 +32,37 @@ test('parses empty fields and quoted multiline records without phantom final row
   expect(parseCsv('a,b\n"x\ny",\n')).toEqual({ content: [['x\ny', '']], header: ['a', 'b'] })
   expect(parseCsv('')).toEqual({ content: [], header: [] })
   expect(() => parseCsv('a\n"unterminated')).toThrow('Invalid or unterminated quoted CSV field')
+})
+
+test('does not turn the final newline into an extra row', () => {
+  expect(parseCsv('name,quantity,note\n')).toEqual({
+    content: [],
+    header: ['name', 'quantity', 'note'],
+  })
+})
+
+test('serializes added rows and columns while preserving existing values and line endings', () => {
+  const original = 'name,quantity,note\nApple,4\nPear,2,ripe\n'
+  const edited = serializeCsvEdits(
+    original,
+    ['name', 'quantity', 'note', 'category'],
+    [
+      ['Apple', '4', '', 'fruit'],
+      ['Pear', '2', 'ripe', 'fruit'],
+      ['Plum', '3', 'purple', 'fruit'],
+    ],
+  )
+  expect(edited).toBe('name,quantity,note,category\nApple,4,,fruit\nPear,2,ripe,fruit\nPlum,3,purple,fruit\n')
+  expect(parseCsv(edited)).toEqual({
+    content: [
+      ['Apple', '4', '', 'fruit'],
+      ['Pear', '2', 'ripe', 'fruit'],
+      ['Plum', '3', 'purple', 'fruit'],
+    ],
+    header: ['name', 'quantity', 'note', 'category'],
+  })
+})
+
+test('serializes a new editable row from an empty file', () => {
+  expect(serializeCsvEdits('', ['name', 'quantity'], [['Apple', '4']])).toBe('name,quantity\nApple,4\n')
 })
