@@ -120,3 +120,73 @@ test('component state edits affect rendering and subsequent cell selection in on
   expect(first.getComponentState().value).toBe('edited')
   expect(second.getComponentState().cells).not.toEqual([['edited']])
 })
+
+test.each([
+  ['10', '15'],
+  ['', '42'],
+  ['10', ''],
+])('saves %j to %j and retains adjacent cells on reopen', async (before, after) => {
+  let disk = `name,quantity,note\nApple,${before},red\nPear,20,green\n`
+  const read = async () => disk
+  const write = jest.fn(async (_uri: string, content: string) => {
+    disk = content
+  })
+  const instance = await createInstanceWithReadFile(createContext(), read, write)
+  instance.handleDoubleClick('cell:0:2')
+  instance.handleEvent?.({ name: 'cellEditor', type: 'input', value: after })
+  instance.handleKeyDown('cellEditor', 'Enter')
+  expect(instance.isDirty()).toBe(true)
+  expect(write).not.toHaveBeenCalled()
+  await instance.save()
+  expect(instance.isDirty()).toBe(false)
+  expect(disk).toBe(`name,quantity,note\nApple,${after},red\nPear,20,green\n`)
+  const reopened = await createInstanceWithReadFile(createContext(), read, write)
+  expect(reopened.getComponentState().cells[0]).toEqual(['Apple', after, 'red'])
+})
+
+test('Escape and unchanged commits leave the document clean', async () => {
+  const write = jest.fn(async () => {})
+  const instance = await createInstanceWithReadFile(createContext(), async () => 'key\na\n', write)
+  instance.handleDoubleClick('cell:0:1')
+  instance.handleEvent?.({ name: 'cellEditor', type: 'input', value: 'b' })
+  instance.handleKeyDown('cellEditor', 'Escape')
+  expect(instance.isDirty()).toBe(false)
+  instance.handleDoubleClick('cell:0:1')
+  instance.handleKeyDown('cellEditor', 'Enter')
+  await instance.save()
+  expect(instance.isDirty()).toBe(false)
+  expect(write).not.toHaveBeenCalled()
+})
+
+test('failed saves retain committed edits and dirty state for retry', async () => {
+  const write = jest.fn(async () => {
+    throw new Error('disk full')
+  })
+  const instance = await createInstanceWithReadFile(createContext(), async () => 'key\na\n', write)
+  instance.handleDoubleClick('cell:0:1')
+  instance.handleEvent?.({ name: 'cellEditor', type: 'input', value: 'b' })
+  instance.handleKeyDown('cellEditor', 'Enter')
+  await expect(instance.save()).rejects.toThrow('disk full')
+  expect(instance.isDirty()).toBe(true)
+  expect(instance.getComponentState().cells[0]).toEqual(['b'])
+})
+
+test('edits made during a pending save remain dirty', async () => {
+  const { promise, resolve } = Promise.withResolvers<void>()
+  const instance = await createInstanceWithReadFile(
+    createContext(),
+    async () => 'key\na\n',
+    async () => promise,
+  )
+  const edit = (value: string): void => {
+    instance.handleDoubleClick('cell:0:1')
+    instance.handleEvent?.({ name: 'cellEditor', type: 'input', value })
+    instance.handleKeyDown('cellEditor', 'Enter')
+  }
+  edit('b')
+  const pending = instance.save()
+  edit('c')
+  resolve()
+  await pending
+  expect(instance.isDirty()).toBe(true)
+})
