@@ -9,7 +9,7 @@ export interface CsvViewInstance extends VirtualDomViewInstance {
   readonly getComponentState: () => CsvViewState
   readonly getContext: () => Readonly<Record<string, boolean>>
   readonly handleDoubleClick: (name: unknown) => void
-  readonly handleKeyDown: (name: unknown, key: unknown) => void
+  readonly handleKeyDown: (name: unknown, key: unknown, ctrlKey?: unknown, metaKey?: unknown) => void
   readonly handleScroll: (scrollTop: unknown, viewportHeight: unknown, scrollLeft: unknown) => void
   readonly handleWheel: (deltaY: unknown) => void
   readonly renderFocus: () => string
@@ -75,6 +75,7 @@ const getScrollTopForRow = (rowIndex: number, scrollTop: number, viewportHeight:
 export const createInstanceWithReadFile = async (context: ViewContext | undefined, read: ReadFile): Promise<CsvViewInstance> => {
   const uri = getUri(context)
   const parsed = parseCsv(uri ? await read(toFileUri(uri)) : '')
+  const editHistory: { readonly columnIndex: number; readonly rowIndex: number; readonly value: string }[] = []
   const savedState = context?.state as SavedState | undefined
   let state: CsvViewState = {
     cells: parsed.content,
@@ -134,12 +135,36 @@ export const createInstanceWithReadFile = async (context: ViewContext | undefine
       cancelEdit()
       return
     }
+    const oldValue = oldRow[columnIndex - 1]
+    if (oldValue === value) {
+      cancelEdit()
+      return
+    }
+    editHistory.push({ columnIndex, rowIndex, value: oldValue })
     const newRow = [...oldRow]
     newRow[columnIndex - 1] = value
     const newCells = [...cells]
     newCells[rowIndex] = newRow
     updateState({ cells: newCells, textArea: false })
     requestFocus(`[id="${getCellName(rowIndex, columnIndex)}"]`)
+  }
+
+  const undoEdit = (): void => {
+    const edit = editHistory.at(-1)
+    if (!edit) {
+      return
+    }
+    const oldRow = state.cells[edit.rowIndex]
+    if (!oldRow) {
+      return
+    }
+    const newRow = [...oldRow]
+    newRow[edit.columnIndex - 1] = edit.value
+    const newCells = [...state.cells]
+    newCells[edit.rowIndex] = newRow
+    editHistory.pop()
+    updateState({ cells: newCells })
+    focusCell(edit.rowIndex, edit.columnIndex)
   }
 
   return {
@@ -169,7 +194,7 @@ export const createInstanceWithReadFile = async (context: ViewContext | undefine
         handleInput(event.value)
       }
     },
-    handleKeyDown(name: unknown, key: unknown): void {
+    handleKeyDown(name: unknown, key: unknown, ctrlKey?: unknown, metaKey?: unknown): void {
       if (typeof key !== 'string') {
         return
       }
@@ -179,6 +204,10 @@ export const createInstanceWithReadFile = async (context: ViewContext | undefine
         } else if (key === 'Escape') {
           cancelEdit()
         }
+        return
+      }
+      if ((ctrlKey === true || metaKey === true) && key.toLowerCase() === 'z') {
+        undoEdit()
         return
       }
       const position = parseCellName(name)

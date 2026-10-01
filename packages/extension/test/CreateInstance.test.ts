@@ -40,6 +40,47 @@ test('edits a cell directly in the isolated view instance', async () => {
   expect(instance.renderFocus()).toBe('[id="cell:0:1"]')
 })
 
+test('undo restores committed cell edits in reverse order without changing neighboring cells', async () => {
+  const instance = await createInstanceWithReadFile(createContext(), async () => 'name,quantity,note\nApple,10,red')
+  instance.handleDoubleClick('cell:0:1')
+  instance.handleEvent?.({ name: 'cellEditor', type: 'input', value: 'Apricot' })
+  instance.handleKeyDown('cellEditor', 'Enter')
+  instance.handleDoubleClick('cell:0:2')
+  instance.handleEvent?.({ name: 'cellEditor', type: 'input', value: '17' })
+  instance.handleKeyDown('cellEditor', 'Enter')
+
+  instance.handleKeyDown('cell:0:2', 'z', true)
+  expect(instance.getComponentState().cells).toEqual([['Apricot', '10', 'red']])
+  instance.handleKeyDown('cell:0:1', 'z', true)
+  expect(instance.getComponentState().cells).toEqual([['Apple', '10', 'red']])
+  instance.handleKeyDown('cell:0:1', 'z', true)
+  expect(instance.getComponentState().cells).toEqual([['Apple', '10', 'red']])
+})
+
+test('does not add undo history for canceled or unchanged edits', async () => {
+  const instance = await createInstanceWithReadFile(createContext(), async () => 'key\na')
+  instance.handleDoubleClick('cell:0:1')
+  instance.handleEvent?.({ name: 'cellEditor', type: 'input', value: 'canceled' })
+  instance.handleKeyDown('cellEditor', 'Escape')
+  instance.handleDoubleClick('cell:0:1')
+  instance.handleKeyDown('cellEditor', 'Enter')
+  instance.handleKeyDown('cell:0:1', 'z', true)
+  expect(instance.getComponentState().cells).toEqual([['a']])
+})
+
+test('keeps undo history isolated between view instances', async () => {
+  const first = await createInstanceWithReadFile(createContext(), async () => 'key\na')
+  const second = await createInstanceWithReadFile(createContext(), async () => 'key\na')
+  first.handleDoubleClick('cell:0:1')
+  first.handleEvent?.({ name: 'cellEditor', type: 'input', value: 'b' })
+  first.handleKeyDown('cellEditor', 'Enter')
+
+  second.handleKeyDown('cell:0:1', 'z', true)
+  expect(second.getComponentState().cells).toEqual([['a']])
+  first.handleKeyDown('cell:0:1', 'z', true)
+  expect(first.getComponentState().cells).toEqual([['a']])
+})
+
 test('cancels editing and preserves the old value', async () => {
   const instance = await createInstanceWithReadFile(createContext(), async () => 'key\na')
   instance.handleDoubleClick('cell:0:1')
