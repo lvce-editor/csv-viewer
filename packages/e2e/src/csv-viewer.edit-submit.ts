@@ -4,8 +4,9 @@ export const name = 'csv-viewer.edit-submit'
 
 export const test: Test = async ({ expect, FileSystem, KeyBoard, Locator, Main }) => {
   const tmpDir = await FileSystem.getTmpDir()
-  await FileSystem.writeFile(`${tmpDir}/submit.csv`, 'key,value\na,1\n')
-  await Main.openUri(`${tmpDir}/submit.csv`)
+  const filePath = `${tmpDir}/submit.csv`
+  await FileSystem.writeFile(filePath, 'key,value\na,1\n')
+  await Main.openUri(filePath)
   const cell = Locator('.TableBody .TableRow').nth(0).locator('.TableCell').nth(1)
   await expect(cell).toHaveText('a')
   await cell.dispatchEvent('dblclick', { bubbles: true } as unknown as string)
@@ -19,5 +20,8 @@ export const test: Test = async ({ expect, FileSystem, KeyBoard, Locator, Main }
   await expect(cell).toHaveText('edited')
   await expect(cell).toBeFocused()
   const nextCell = Locator('.TableBody .TableRow').nth(0).locator('.TableCell').nth(2)
+  await expect(nextCell).toHaveText('1')
+  await KeyBoard.press('ControlOrMeta+z')
+  await expect(cell).toHaveText('a')
   await expect(nextCell).toHaveText('1')
 }
