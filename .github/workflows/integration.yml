@@ -43,9 +43,20 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Prepare owned integration tests
         run: node packages/e2e-integration/prepare.mjs .tmp/lvce-integration
-      - name: Trace reopen RPC boundaries
+      - uses: actions/checkout@v7
         if: matrix.os == 'ubuntu-24.04'
-        run: node packages/e2e-integration/trace-reopen.mjs .tmp/lvce-integration
+        with:
+          repository: lvce-editor/extension-management-worker
+          ref: db7e5e13592e8afb5026606547a7933408e8c53e
+          path: .tmp/extension-management-candidate
+      - name: Build worker lifetime candidate
+        if: matrix.os == 'ubuntu-24.04'
+        working-directory: .tmp/extension-management-candidate
+        run: npm ci && npm run build
+      - name: Install worker lifetime candidate for regression stress
+        if: matrix.os == 'ubuntu-24.04'
+        run: cp .tmp/extension-management-candidate/.tmp/dist/dist/extensionManagementWorkerMain.js .tmp/lvce-integration/node_modules/@lvce-editor/extension-management-worker/dist/extensionManagementWorkerMain.js
+        shell: bash
       - name: Test extension view Explorer focus handoff
         if: matrix.os == 'ubuntu-24.04'
         working-directory: .tmp/lvce-integration/packages/extension-host-worker-tests
