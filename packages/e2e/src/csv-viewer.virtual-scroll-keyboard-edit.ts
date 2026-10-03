@@ -2,7 +2,7 @@ import type { Test } from '@lvce-editor/test-with-playwright'
 
 export const name = 'csv-viewer.virtual-scroll-keyboard-edit'
 
-export const test: Test = async ({ expect, FileSystem, KeyBoard, Locator, Main }) => {
+export const test: Test = async ({ Command, expect, FileSystem, KeyBoard, Locator, Main }) => {
   const tmpDir = await FileSystem.getTmpDir()
   const rows = Array.from({ length: 200 }, (_, index) => `row ${index + 1},value ${index + 1}`)
   await FileSystem.writeFile(`${tmpDir}/virtual-scroll.csv`, `name,value\n${rows.join('\n')}`)
@@ -10,9 +10,15 @@ export const test: Test = async ({ expect, FileSystem, KeyBoard, Locator, Main }
 
   const firstCell = Locator('[id="cell:0:1"]')
   await expect(firstCell).toHaveText('row 1')
-  // A real click must focus the webview cell so subsequent keyboard events target it.
-  // eslint-disable-next-line e2e/no-direct-click
-  await firstCell.click()
+  const viewStates = (await Command.execute('Viewlet.getAllStates')) as Record<
+    string,
+    { readonly uid: number; readonly viewId: string }
+  >
+  const extensionView = Object.values(viewStates).find(({ viewId }) => viewId === 'builtin.csv-viewer')
+  if (!extensionView) {
+    throw new Error('Expected CSV extension view')
+  }
+  await Command.execute('Viewlet.executeViewletCommand', extensionView.uid, 'handleViewEvent', 'click', 'cell:0:1')
   await expect(firstCell).toBeFocused()
   for (let index = 0; index < 100; index++) {
     await KeyBoard.press('ArrowDown')
@@ -23,10 +29,16 @@ export const test: Test = async ({ expect, FileSystem, KeyBoard, Locator, Main }
   const scrolledCell = Locator('.TableCellFocused')
   await expect(scrolledCell).toHaveText('row 101')
   await expect(scrolledCell).toBeFocused()
-  await scrolledCell.dispatchEvent('dblclick', { bubbles: true } as unknown as string)
+  await Command.execute(
+    'Viewlet.executeViewletCommand',
+    extensionView.uid,
+    'handleViewCommand',
+    'handleDoubleClick',
+    'cell:100:1',
+  )
   const editor = Locator('[name="cellEditor"]')
   await expect(editor).toHaveValue('row 101')
-  await editor.type(' edited')
+  await Command.execute('Viewlet.executeViewletCommand', extensionView.uid, 'handleInput', 'cellEditor', ' edited')
   await KeyBoard.press('Enter')
   await expect(editor).toHaveCount(0)
   const editedCell = Locator('.TableCellFocused')
