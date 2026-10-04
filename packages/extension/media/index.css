@@ -35,15 +35,43 @@ body {
 
 .ScrollContainer {
   width: 100%;
-  height: calc(100% - 30px);
+  height: calc(100% - 36px);
   overflow: auto;
   overscroll-behavior: contain;
 }
 
 .GridActions {
+  align-items: center;
   display: flex;
-  gap: 4px;
-  padding: 4px;
+  gap: 6px;
+  height: 36px;
+  padding: 4px 8px;
+}
+
+.GridActions button {
+  background: var(--ButtonSecondaryBackground, #353b3c);
+  border: 1px solid var(--ButtonBorder, transparent);
+  border-radius: 4px;
+  color: var(--ButtonSecondaryForeground, #e1e4e3);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  line-height: 18px;
+  min-height: 28px;
+  padding: 4px 10px;
+}
+
+.GridActions button:hover {
+  background: var(--ButtonSecondaryHoverBackground, #41494a);
+}
+
+.GridActions button:active {
+  filter: brightness(0.9);
+}
+
+.GridActions button:focus-visible {
+  outline: 1px solid var(--FocusBorder, #007fd4);
+  outline-offset: 1px;
 }
 
 .Table {
