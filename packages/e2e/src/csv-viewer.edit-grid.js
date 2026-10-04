@@ -13,6 +13,8 @@ export const test = async ({ expect, FileSystem, KeyBoard, Locator, Main }) => {
     await cell.dispatchEvent('dblclick', { bubbles: true })
     const editor = Locator('[name="cellEditor"]')
     await expect(editor).toBeFocused()
+    await expect(editor).toHaveCSS('left', `${column === 0 ? 0 : 40 + (column - 1) * 120 + 1}px`)
+    await expect(editor).toHaveCSS('top', `${36 + (row + 1) * 20 + 1}px`)
     await editor.type(value)
     await KeyBoard.press('Enter')
     await expect(cell).toHaveText(value)

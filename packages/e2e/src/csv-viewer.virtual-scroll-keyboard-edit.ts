@@ -38,6 +38,8 @@ export const test: Test = async ({ Command, expect, FileSystem, KeyBoard, Locato
   )
   const editor = Locator('[name="cellEditor"]')
   await expect(editor).toHaveValue('row 101')
+  await expect(editor).toHaveCSS('left', '41px')
+  await expect(editor).toBeVisible()
   await Command.execute('Viewlet.executeViewletCommand', extensionView.uid, 'handleInput', 'cellEditor', ' edited')
   await KeyBoard.press('Enter')
   await expect(editor).toHaveCount(0)

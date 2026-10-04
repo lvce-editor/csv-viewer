@@ -7,6 +7,7 @@ export const getTextAreaPosition = (rowIndex: number, columnIndex: number, scrol
   const rowHeight = 20
   const columnWidth = 120
   const firstColumnWidth = 40
+  const gridActionsHeight = 36
   let x = 0
   if (columnIndex >= 1) {
     x += firstColumnWidth
@@ -16,6 +17,6 @@ export const getTextAreaPosition = (rowIndex: number, columnIndex: number, scrol
   }
   return {
     x: x - scrollLeft + 1,
-    y: rowHeight * (rowIndex + 1) - scrollTop + 1,
+    y: gridActionsHeight + rowHeight * (rowIndex + 1) - scrollTop + 1,
   }
 }
