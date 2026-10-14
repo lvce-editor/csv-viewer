@@ -87,6 +87,50 @@ test('supports empty CSVs and repeated row and column insertion', async () => {
   expect(instance.render()).toContainEqual(expect.objectContaining({ name: 'cell:1:2' }))
 })
 
+test('opens a cell context menu at the pointer and captures the clicked cell', async () => {
+  const context = createContext()
+  const instance = await createInstanceWithReadFile(context, async () => 'name,quantity\nApple,10\nPear,20')
+  instance.handleEvent?.({ name: 'cell:1:2', type: 'click' })
+
+  await instance.handleEvent?.({ name: 'cell:0:1', type: 'contextmenu', x: 40, y: 60 })
+
+  expect(context.showContextMenu).toHaveBeenCalledWith('csvViewer.cellContextMenu', 40, 60)
+  expect(instance.getMenuEntries?.('csvViewer.cellContextMenu')).toEqual([
+    expect.objectContaining({ id: 'addRowBelow', label: 'Add row below' }),
+    expect.objectContaining({ id: 'addColumnRight', label: 'Add column right' }),
+  ])
+  instance.handleAddRowBelow()
+  expect(instance.getComponentState().cells).toEqual([
+    ['Apple', '10'],
+    ['', ''],
+    ['Pear', '20'],
+  ])
+  expect(instance.renderFocus()).toBe('[id="cell:1:1"]')
+})
+
+test('inserts context menu columns after the target, including at the last column', async () => {
+  const instance = await createInstanceWithReadFile(createContext(), async () => 'name,quantity\nApple,10\nPear,20')
+  await instance.handleContextMenu({ name: 'cell:0:1', type: 'contextmenu', x: 40, y: 60 })
+  instance.handleAddColumnRight()
+  expect(instance.getComponentState().header).toEqual(['name', 'Column 3', 'quantity'])
+  expect(instance.getComponentState().cells).toEqual([
+    ['Apple', '', '10'],
+    ['Pear', '', '20'],
+  ])
+
+  await instance.handleContextMenu({ name: 'cell:1:3', type: 'contextmenu', x: 280, y: 80 })
+  instance.handleAddColumnRight()
+  expect(instance.getComponentState().header).toEqual(['name', 'Column 3', 'quantity', 'Column 4'])
+  expect(instance.getComponentState().cells[1]).toEqual(['Pear', '', '20', ''])
+})
+
+test('dismissing a cell context menu leaves the CSV unchanged', async () => {
+  const instance = await createInstanceWithReadFile(createContext(), async () => 'name\nApple')
+  await instance.handleContextMenu({ name: 'cell:0:1', type: 'contextmenu', x: 40, y: 60 })
+  expect(instance.getComponentState().cells).toEqual([['Apple']])
+  expect(instance.isDirty()).toBe(false)
+})
+
 test('pads ragged rows to the widest existing row before extending columns', async () => {
   const instance = await createInstanceWithReadFile(createContext(), async () => 'name,quantity,note\nApple,4\nPear,2,ripe,extra')
   expect(instance.getComponentState().header).toEqual(['name', 'quantity', 'note', ''])
@@ -263,6 +307,29 @@ test('saves added rows and columns and restores them after reopening', async () 
   expect(reopened.getComponentState().cells).toEqual([
     ['Apple', '4', 'fresh', 'fruit'],
     ['Pear', '', '', ''],
+  ])
+})
+
+test('saves rows and columns inserted from the cell context menu and restores them after reopening', async () => {
+  let disk = 'name,quantity\nApple,10\nPear,20\n'
+  const read = async () => disk
+  const write = async (_uri: string, content: string): Promise<void> => {
+    disk = content
+  }
+  const instance = await createInstanceWithReadFile(createContext(), read, write)
+  await instance.handleContextMenu({ name: 'cell:0:1', type: 'contextmenu', x: 40, y: 60 })
+  instance.handleAddRowBelow()
+  await instance.handleContextMenu({ name: 'cell:0:1', type: 'contextmenu', x: 40, y: 60 })
+  instance.handleAddColumnRight()
+  await instance.save()
+
+  expect(disk).toBe('name,Column 3,quantity\nApple,,10\n,,\nPear,,20\n')
+  const reopened = await createInstanceWithReadFile(createContext(), read, write)
+  expect(reopened.getComponentState().header).toEqual(['name', 'Column 3', 'quantity'])
+  expect(reopened.getComponentState().cells).toEqual([
+    ['Apple', '', '10'],
+    ['', '', ''],
+    ['Pear', '', '20'],
   ])
 })
 
