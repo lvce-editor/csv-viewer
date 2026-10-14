@@ -6,6 +6,7 @@ const handleDoubleClick = 'handleDoubleClick'
 const handleInput = 'handleInput'
 const handleKeyDown = 'handleKeyDown'
 const handleClick = 'handleClick'
+const handleContextMenu = 'handleContextMenu'
 const rowHeight = 20
 const overscan = 50
 
@@ -107,6 +108,7 @@ const renderCell = (
       id: getCellName(rowIndex, columnIndex),
       name: getCellName(rowIndex, columnIndex),
       onClick: handleClick,
+      onContextMenu: handleContextMenu,
       ...(columnIndex > 0 && { onDblClick: handleDoubleClick }),
       onKeyDown: handleKeyDown,
       // The constants package does not export the valid ARIA gridcell role.

@@ -1,5 +1,12 @@
 import type { VirtualDomNode } from '@lvce-editor/virtual-dom-worker'
-import { readFile, writeFile, type ViewContext, type ViewEvent, type VirtualDomViewInstance } from '@lvce-editor/api'
+import {
+  readFile,
+  writeFile,
+  type MenuEntry,
+  type ViewContext,
+  type ViewEvent,
+  type VirtualDomViewInstance,
+} from '@lvce-editor/api'
 import type { CsvViewState } from '../CsvViewState/CsvViewState.ts'
 import { parseCsv, serializeCsvEdits } from '../ParseCsv/ParseCsv.ts'
 import { getCellName, renderCsv } from '../RenderCsv/RenderCsv.ts'
@@ -8,6 +15,9 @@ import { toFileUri } from '../ToFileUri/ToFileUri.ts'
 export interface CsvViewInstance extends VirtualDomViewInstance {
   readonly getComponentState: () => CsvViewState
   readonly getContext: () => Readonly<Record<string, boolean>>
+  readonly handleAddColumnRight: () => void
+  readonly handleAddRowBelow: () => void
+  readonly handleContextMenu: (event: Readonly<ViewEvent>) => Promise<void>
   readonly handleDoubleClick: (name: unknown) => void
   readonly handleKeyDown: (name: unknown, key: unknown) => void
   readonly handleScroll: (scrollTop: unknown, viewportHeight: unknown, scrollLeft: unknown) => void
@@ -28,6 +38,8 @@ interface SavedState {
 }
 
 type ReadFile = (uri: string) => Promise<string>
+
+const cellContextMenuId = 'csvViewer.cellContextMenu'
 
 const createEmptyRow = (columnCount: number): string[] => {
   const row: string[] = []
@@ -129,6 +141,7 @@ export const createInstanceWithReadFile = async (
     value: typeof savedState?.value === 'string' ? savedState.value : '',
     viewportHeight: 600,
   }
+  let contextMenuTarget: { readonly columnIndex: number; readonly rowIndex: number } | undefined
 
   const getContent = (): string => {
     if (serializedCells !== state.cells || serializedHeader !== state.header) {
@@ -193,6 +206,58 @@ export const createInstanceWithReadFile = async (
     focusCell(state.rowIndex, columnIndex + 1)
   }
 
+  const addRowBelowContextMenuTarget = (): void => {
+    const target = contextMenuTarget
+    if (!target) {
+      return
+    }
+    const insertIndex = target.rowIndex + 1
+    const cells = [...state.cells]
+    while (cells.length < insertIndex) {
+      cells.push(createEmptyRow(state.header.length))
+    }
+    cells.splice(insertIndex, 0, createEmptyRow(state.header.length))
+    contextMenuTarget = undefined
+    updateState({ cells })
+    focusCell(insertIndex, Math.min(target.columnIndex, state.header.length))
+  }
+
+  const addColumnRightOfContextMenuTarget = (): void => {
+    const target = contextMenuTarget
+    if (!target) {
+      return
+    }
+    const insertIndex = target.columnIndex
+    const header = [...state.header]
+    header.splice(insertIndex, 0, `Column ${header.length + 1}`)
+    const cells = state.cells.map((row) => {
+      const newRow = [...row]
+      newRow.splice(insertIndex, 0, '')
+      return newRow
+    })
+    contextMenuTarget = undefined
+    updateState({ cells, header })
+    focusCell(target.rowIndex, insertIndex + 1)
+  }
+
+  const handleContextMenu = async (event: Readonly<ViewEvent>): Promise<void> => {
+    const position = parseCellName(event.name)
+    if (
+      !position ||
+      position.columnIndex <= 0 ||
+      position.columnIndex > state.header.length ||
+      position.rowIndex > Math.max(0, state.cells.length - 1) ||
+      typeof event.x !== 'number' ||
+      !Number.isFinite(event.x) ||
+      typeof event.y !== 'number' ||
+      !Number.isFinite(event.y)
+    ) {
+      return
+    }
+    contextMenuTarget = position
+    await context?.showContextMenu(cellContextMenuId, event.x, event.y)
+  }
+
   const handleInput = (value: unknown): void => {
     if (state.textArea && typeof value === 'string') {
       updateState({ value })
@@ -243,6 +308,34 @@ export const createInstanceWithReadFile = async (
     getContext(): Readonly<Record<string, boolean>> {
       return { csvViewerFocusRequest: state.focusRequest }
     },
+    getMenuEntries(menuId: string): readonly MenuEntry[] {
+      if (menuId !== cellContextMenuId || !contextMenuTarget) {
+        return []
+      }
+      return [
+        {
+          args: [context?.uid, 'handleViewCommand', 'handleAddRowBelow'],
+          command: 'Viewlet.executeViewletCommand',
+          flags: 6,
+          id: 'addRowBelow',
+          label: 'Add row below',
+        },
+        {
+          args: [context?.uid, 'handleViewCommand', 'handleAddColumnRight'],
+          command: 'Viewlet.executeViewletCommand',
+          flags: 6,
+          id: 'addColumnRight',
+          label: 'Add column right',
+        },
+      ]
+    },
+    handleAddColumnRight(): void {
+      addColumnRightOfContextMenuTarget()
+    },
+    handleAddRowBelow(): void {
+      addRowBelowContextMenuTarget()
+    },
+    handleContextMenu,
     handleDoubleClick(name: unknown): void {
       const position = parseCellName(name)
       if (!position) {
@@ -250,17 +343,23 @@ export const createInstanceWithReadFile = async (
       }
       startEditing(position.rowIndex, position.columnIndex)
     },
-    handleEvent(event: Readonly<ViewEvent>): void {
-      if (event.type === 'click') {
-        if (event.name === 'addRow') {
-          addRow()
-        } else if (event.name === 'addColumn') {
-          addColumn()
-        } else {
-          handleCellClick(event.name)
-        }
-      } else if (event.type === 'input') {
-        handleInput(event.value)
+    async handleEvent(event: Readonly<ViewEvent>): Promise<void> {
+      switch (event.type) {
+        case 'click':
+          if (event.name === 'addRow') {
+            addRow()
+          } else if (event.name === 'addColumn') {
+            addColumn()
+          } else {
+            handleCellClick(event.name)
+          }
+          break
+        case 'contextmenu':
+          await handleContextMenu(event)
+          break
+        case 'input':
+          handleInput(event.value)
+          break
       }
     },
     handleKeyDown(name: unknown, key: unknown): void {
