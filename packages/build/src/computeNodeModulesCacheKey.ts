@@ -7,7 +7,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const root = join(__dirname, '..', '..', '..')
 
-const locations = ['package.json', 'package-lock.json']
+const locations = ['package.json', 'package-lock.json', '.nvmrc']
 
 const getAbsolutePath = (relativePath) => {
   return join(root, relativePath)
