@@ -24,6 +24,7 @@ export const test: Test = async ({ Command, expect, FileSystem, KeyBoard, Locato
     await KeyBoard.press('ArrowDown')
     const focusedCell = Locator('.TableCellFocused')
     await expect(focusedCell).toHaveText(`row ${index + 2}`)
+    await expect(focusedCell).toBeFocused()
   }
 
   const scrolledCell = Locator('.TableCellFocused')
@@ -40,6 +41,7 @@ export const test: Test = async ({ Command, expect, FileSystem, KeyBoard, Locato
   await expect(editor).toHaveValue('row 101')
   await expect(editor).toHaveCSS('left', '41px')
   await expect(editor).toBeVisible()
+  await expect(editor).toBeFocused()
   await Command.execute('Viewlet.executeViewletCommand', extensionView.uid, 'handleInput', 'cellEditor', ' edited')
   await KeyBoard.press('Enter')
   await expect(editor).toHaveCount(0)
