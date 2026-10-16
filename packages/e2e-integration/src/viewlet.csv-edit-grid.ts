@@ -60,7 +60,7 @@ export const test: Test = async ({ expect, FileSystem, KeyBoard, Locator, Main }
   await expect(Locator('.TableHeading').nth(4)).toHaveText('Column 4')
   await expect(Locator('[id="cell:0:4"]')).toBeVisible()
   await edit(0, 4, 'fruit')
-  await expect(Locator('[id="cell:0:1"]')).toHaveText('Apple')
+  await expect(Locator('[id="cell:0:1"]')).toHaveText('Apple pear')
   await expect(Locator('[id="cell:0:2"]')).toHaveText('4')
   await expect(Locator('[id="cell:0:3"]')).toHaveText('fresh')
   await expect(Locator('[id="cell:1:1"]')).toHaveText('Pear')
@@ -69,12 +69,12 @@ export const test: Test = async ({ expect, FileSystem, KeyBoard, Locator, Main }
   await KeyBoard.press('Control+s')
   await expect(Locator('.MainTab.MainTabModified[title$="header-only.csv"]')).toHaveCount(0)
   const saved = await FileSystem.readFile(headerOnlyUri)
-  if (saved !== 'name,quantity,note,Column 4\nApple,4,fresh,fruit\nPear,,,\n') {
+  if (saved !== 'name,quantity,note,Column 4\nApple pear,4,fresh,fruit\nPear,,,\n') {
     throw new Error(`Unexpected saved CSV: ${JSON.stringify(saved)}`)
   }
   await Main.closeActiveEditor()
   await Main.openUri(headerOnlyUri)
-  await expect(Locator('[id="cell:0:1"]')).toHaveText('Apple')
+  await expect(Locator('[id="cell:0:1"]')).toHaveText('Apple pear')
   await expect(Locator('[id="cell:0:4"]')).toHaveText('fruit')
   await expect(Locator('[id="cell:1:1"]')).toHaveText('Pear')
 
