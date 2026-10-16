@@ -5,6 +5,7 @@ import { getTextAreaPosition } from '../GetTextAreaPosition/GetTextAreaPosition.
 const handleDoubleClick = 'handleDoubleClick'
 const handleInput = 'handleInput'
 const handleKeyDown = 'handleKeyDown'
+const handleEditorKeyDown = 'handleEditorKeyDown'
 const handleClick = 'handleClick'
 const handleContextMenu = 'handleContextMenu'
 const rowHeight = 20
@@ -173,7 +174,7 @@ const renderTextArea = (state: Readonly<CsvViewState>): VirtualDomNode => {
     className: 'TextArea',
     name: 'cellEditor',
     onInput: handleInput,
-    onKeyDown: handleKeyDown,
+    onKeyDown: handleEditorKeyDown,
     style: `left: ${x}px; top: ${y}px;`,
     type: VirtualDomElements.TextArea,
     value,

@@ -24,6 +24,11 @@ export const view: InstanceView<CsvViewInstance, CsvViewState> = {
     {
       name: 'handleKeyDown',
       params: ['handleKeyDown', 'event.target.name', 'event.key'],
+      preventDefault: true,
+    },
+    {
+      name: 'handleEditorKeyDown',
+      params: ['handleEditorKeyDown', 'event.target.name', 'event.key'],
     },
   ],
   getComponentState: (instance) => instance.getComponentState(),
