@@ -19,6 +19,7 @@ export interface CsvViewInstance extends VirtualDomViewInstance {
   readonly handleAddRowBelow: () => void
   readonly handleContextMenu: (event: Readonly<ViewEvent>) => Promise<void>
   readonly handleDoubleClick: (name: unknown) => void
+  readonly handleEditorKeyDown: (name: unknown, key: unknown) => void
   readonly handleKeyDown: (name: unknown, key: unknown) => void
   readonly handleScroll: (scrollTop: unknown, viewportHeight: unknown, scrollLeft: unknown) => void
   readonly handleWheel: (deltaY: unknown) => void
@@ -343,6 +344,16 @@ export const createInstanceWithReadFile = async (
       }
       startEditing(position.rowIndex, position.columnIndex)
     },
+    handleEditorKeyDown(name: unknown, key: unknown): void {
+      if (name !== 'cellEditor' || typeof key !== 'string') {
+        return
+      }
+      if (key === 'Enter') {
+        submitEdit()
+      } else if (key === 'Escape') {
+        cancelEdit()
+      }
+    },
     async handleEvent(event: Readonly<ViewEvent>): Promise<void> {
       switch (event.type) {
         case 'click':
@@ -381,6 +392,10 @@ export const createInstanceWithReadFile = async (
       const { cells, header } = state
       const maxRowIndex = cells.length - 1
       let { columnIndex, rowIndex } = position
+      if (key === ' ') {
+        startEditing(rowIndex, columnIndex)
+        return
+      }
       switch (key) {
         case 'ArrowDown':
           rowIndex = Math.min(maxRowIndex, rowIndex + 1)
@@ -399,6 +414,7 @@ export const createInstanceWithReadFile = async (
           clearCell(rowIndex, columnIndex)
           return
         case 'Enter':
+        case 'Space':
           startEditing(rowIndex, columnIndex)
           return
         default:

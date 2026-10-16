@@ -35,10 +35,22 @@ export const test: Test = async ({ expect, FileSystem, KeyBoard, Locator, Main }
     await expect(cell).toHaveText(value)
   }
 
+  const editWithSpace = async (row: number, column: number, value: string): Promise<void> => {
+    const cell = Locator(`[id="cell:${row}:${column}"]`)
+    await cell.click()
+    await waitFor(() => expect(cell).toBeFocused())
+    await KeyBoard.press('Space')
+    const editor = Locator('[name="cellEditor"]')
+    await waitFor(() => expect(editor).toBeFocused())
+    await editor.type(value)
+    await KeyBoard.press('Enter')
+    await expect(cell).toHaveText(value)
+  }
+
   await expect(Locator('[id="cell:0:1"]')).toBeVisible()
   await expect(Locator('[id="cell:0:2"]')).toBeVisible()
   await expect(Locator('[id="cell:0:3"]')).toBeVisible()
-  await edit(0, 1, 'Apple')
+  await editWithSpace(0, 1, 'Apple pear')
   await edit(0, 2, '4')
   await edit(0, 3, 'fresh')
   await Locator('[name="addRow"]').click()

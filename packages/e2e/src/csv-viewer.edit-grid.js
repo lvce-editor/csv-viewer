@@ -20,10 +20,22 @@ export const test = async ({ expect, FileSystem, KeyBoard, Locator, Main }) => {
     await expect(cell).toHaveText(value)
   }
 
+  const editWithSpace = async (row, column, value) => {
+    const cell = Locator(`[id="cell:${row}:${column}"]`)
+    await cell.click()
+    await expect(cell).toBeFocused()
+    await KeyBoard.press('Space')
+    const editor = Locator('[name="cellEditor"]')
+    await expect(editor).toBeFocused()
+    await editor.type(value)
+    await KeyBoard.press('Enter')
+    await expect(cell).toHaveText(value)
+  }
+
   await expect(Locator('[id="cell:0:1"]')).toBeVisible()
   await expect(Locator('[id="cell:0:2"]')).toBeVisible()
   await expect(Locator('[id="cell:0:3"]')).toBeVisible()
-  await edit(0, 1, 'Apple')
+  await editWithSpace(0, 1, 'Apple pear')
   await edit(0, 2, '4')
   await edit(0, 3, 'fresh')
   await Locator('[name="addRow"]').click()
@@ -33,7 +45,7 @@ export const test = async ({ expect, FileSystem, KeyBoard, Locator, Main }) => {
   await expect(Locator('.TableHeading').nth(4)).toHaveText('Column 4')
   await expect(Locator('[id="cell:0:4"]')).toBeVisible()
   await edit(0, 4, 'fruit')
-  await expect(Locator('[id="cell:0:1"]')).toHaveText('Apple')
+  await expect(Locator('[id="cell:0:1"]')).toHaveText('Apple pear')
   await expect(Locator('[id="cell:0:2"]')).toHaveText('4')
   await expect(Locator('[id="cell:0:3"]')).toHaveText('fresh')
   await expect(Locator('[id="cell:1:1"]')).toHaveText('Pear')

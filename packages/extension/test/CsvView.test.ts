@@ -22,6 +22,11 @@ test('registers the CSV virtual DOM view', () => {
     {
       name: 'handleKeyDown',
       params: ['handleKeyDown', 'event.target.name', 'event.key'],
+      preventDefault: true,
+    },
+    {
+      name: 'handleEditorKeyDown',
+      params: ['handleEditorKeyDown', 'event.target.name', 'event.key'],
     },
   ])
 })

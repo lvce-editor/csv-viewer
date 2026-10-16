@@ -49,6 +49,19 @@ test('starts editing the focused cell with Enter', async () => {
   expect(instance.renderFocus()).toBe('[name="cellEditor"]')
 })
 
+test('starts editing the focused cell with Space', async () => {
+  const instance = await createInstanceWithReadFile(createContext(), async () => 'name,quantity\nApple,10')
+  instance.handleKeyDown('cell:0:2', ' ')
+  expect(instance.getComponentState()).toMatchObject({
+    columnIndex: 2,
+    rowIndex: 0,
+    textArea: true,
+    value: '10',
+  })
+  expect(instance.render()).toContainEqual(expect.objectContaining({ name: 'cellEditor', value: '10' }))
+  expect(instance.renderFocus()).toBe('[name="cellEditor"]')
+})
+
 test.each(['cell:0:0', 'cell:0:3', 'cell:4:1'])('does not edit non-data cell %s with Enter', async (name) => {
   const instance = await createInstanceWithReadFile(createContext(), async () => 'name,quantity\nApple,10')
   instance.handleKeyDown(name, 'Enter')
